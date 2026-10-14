@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 final class SettingsPage extends ScrollView {
     private final ChatEngine chat;
-    private final TextView accountState,modelInfo,usage,limits,secretStatus,scope;
+    private final TextView accountState,modelInfo,usage,limits,secretStatus,scope,packagesState;
     private long configuredThread=-1;
     private final LinearLayout secretRows;
     private final EditText contextSize;
@@ -52,6 +52,12 @@ final class SettingsPage extends ScrollView {
             v.setEnabled(false); toast(Language.text(R.string.checking_codex));
             chat.updateCodex(result -> { v.setEnabled(true); toast(result); refresh(); });
         }); body.addView(codex,Ui.size(context,-1,46)); Ui.gap(body,22);
+
+        body.addView(Ui.section(context,Language.text(R.string.packages)));
+        LinearLayout tools=group(body);
+        packagesState=Ui.text(context,Language.text(R.string.packages_checking),12,Ui.MUTED); packagesState.setLineSpacing(Ui.dp(context,3),1); tools.addView(packagesState); Ui.gap(tools,12);
+        tools.addView(Ui.button(context,Language.text(R.string.install_packages),false,v -> choosePackages()),Ui.size(context,-1,46)); Ui.gap(body,22);
+        loadPackages();
 
         body.addView(Ui.section(context,Language.text(R.string.this_chat_2)));
         LinearLayout thread=group(body);
@@ -215,6 +221,48 @@ final class SettingsPage extends ScrollView {
                 LinearLayout.LayoutParams lp=Ui.size(getContext(),-1,48); lp.bottomMargin=Ui.dp(getContext(),6); secretRows.addView(row,lp);
             }
         } catch(Exception e) { secretStatus.setText(Language.text(R.string.vault_error)+e.getMessage()); }
+    }
+    private void loadPackages() {
+        Context c=getContext();
+        new Thread(() -> {
+            String text;
+            try {
+                JSONObject installed=new Packages(c).installed(new OpenAiClient.Cancel()); String codex=Packages.version(installed,"codex");
+                text=installed.length()==0?Language.text(R.string.packages_missing)
+                    :String.format(Language.locale(),Language.text(R.string.packages_state),codex.isEmpty()?"—":codex,installed.length());
+            } catch(Exception e) { text=Language.text(R.string.packages_unavailable); }
+            String result=text; post(() -> packagesState.setText(result));
+        },"meshell-packages-state").start();
+    }
+    private void choosePackages() {
+        Context c=getContext(); LinearLayout form=Ui.column(c); Ui.pad(form,22,10,22,4);
+        TextView about=Ui.text(c,Language.text(R.string.packages_source),13,Ui.MUTED); about.setLineSpacing(Ui.dp(c,3),1); form.addView(about); Ui.gap(form,10);
+        CheckBox build=new CheckBox(c); build.setText(Language.text(R.string.include_build_tools)); build.setTextColor(Ui.INK); build.setTextSize(14);
+        build.setButtonTintList(android.content.res.ColorStateList.valueOf(Ui.MINT)); form.addView(build);
+        new AlertDialog.Builder(c).setTitle(Language.text(R.string.packages)).setView(form).setNegativeButton(Language.text(R.string.cancel),null)
+            .setPositiveButton(Language.text(R.string.install),(d,w) -> installPackages(build.isChecked())).show();
+    }
+    private void installPackages(boolean build) {
+        OpenAiClient.Cancel cancel=new OpenAiClient.Cancel(); TextView output=Ui.text(getContext(),Language.text(R.string.reading_package_index),13,Ui.INK);
+        Ui.pad(output,22,12,22,12); output.setTextIsSelectable(true);
+        AlertDialog dialog=new AlertDialog.Builder(getContext()).setTitle(Language.text(R.string.packages)).setView(output)
+            .setNegativeButton(Language.text(R.string.stop),(d,w) -> cancel.stop()).create();
+        dialog.setOnCancelListener(d -> cancel.stop()); dialog.show();
+        List<String> names=new java.util.ArrayList<>(java.util.Arrays.asList(Packages.CORE));
+        if(build) names.addAll(java.util.Arrays.asList(Packages.BUILD));
+        new Thread(() -> {
+            String result;
+            try {
+                JSONObject value=new Packages(getContext()).install(names,true,text -> post(() -> output.setText(text)),cancel);
+                result=value.optBoolean("up_to_date")?Language.text(R.string.packages_up_to_date)
+                    :String.format(Language.locale(),Language.text(R.string.packages_changed),value.getJSONArray("changed").length())+"\n\n"+Language.text(R.string.codex_cli_ready);
+            } catch(Exception e) { result=cancel.stopped?Language.text(R.string.stopped):Language.text(R.string.package_installation_failed)+Packages.message(e); }
+            String finalResult=result;
+            post(() -> {
+                loadPackages();
+                if(dialog.isShowing()) { output.setText(finalResult); dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setText(Language.text(R.string.close)); }
+            });
+        },"meshell-packages").start();
     }
     private void local(String name) {
         if((chat.busy || chat.loggingIn) && !"environment_info".equals(name)) { toast(Language.text(R.string.finish_or_stop_tasks_before_building_installing)); return; }

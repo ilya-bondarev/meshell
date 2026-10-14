@@ -497,4 +497,27 @@
     <string name="model_list_refreshed" formatted="false">" · список моделей обновлён"</string>
     <string name="codex_update_failed" formatted="false">"Не удалось проверить Codex: "</string>
     <string name="unexpected_codex_version" formatted="false">"Неожиданная версия Codex: "</string>
+    <string name="packages" formatted="false">"Пакеты"</string>
+    <string name="unknown_package" formatted="false">"Неизвестный пакет: "</string>
+    <string name="package_checksum_mismatch" formatted="false">"Не совпала контрольная сумма: "</string>
+    <string name="packages_busy" formatted="false">"Пакеты уже устанавливаются"</string>
+    <string name="packages_need_shell" formatted="false">"Сначала запустите терминал: пакеты ставятся через ADB-оболочку"</string>
+    <string name="reading_package_index" formatted="false">"Читаю индекс пакетов Termux…"</string>
+    <string name="not_enough_space_for_packages" formatted="false">"Мало места: нужно %1$d МБ, свободно %2$d МБ"</string>
+    <string name="packages_plan" formatted="false">"Пакетов: %1$d, скачать %2$d МБ, на диске %3$d МБ"</string>
+    <string name="downloading_package" formatted="false">"%1$d/%2$d · скачиваю %3$s %4$s (%5$d МБ)"</string>
+    <string name="unpacking_package" formatted="false">"%1$d/%2$d · распаковываю %3$s"</string>
+    <string name="codex_cli_ready" formatted="false">"Codex CLI готов. В терминале: codex login --device-auth, затем codex"</string>
+    <string name="package_installation_failed" formatted="false">"Пакеты не установились: "</string>
+    <string name="installing_codex_and_tools" formatted="false">"Устанавливаю Codex и инструменты"</string>
+    <string name="packages_up_to_date" formatted="false">"Все пакеты актуальны"</string>
+    <string name="packages_changed" formatted="false">"Установлено или обновлено: %1$d"</string>
+    <string name="install_packages" formatted="false">"Установить или обновить пакеты"</string>
+    <string name="packages_state" formatted="false">"Codex CLI %1$s · пакетов: %2$d"</string>
+    <string name="packages_missing" formatted="false">"Codex CLI и инструменты ещё не установлены. Они поставятся сами по Wi-Fi, когда подключится терминал."</string>
+    <string name="packages_checking" formatted="false">"Проверяю установленные пакеты…"</string>
+    <string name="packages_unavailable" formatted="false">"Статус пакетов появится, когда запущен терминал"</string>
+    <string name="include_build_tools" formatted="false">"Ещё инструменты сборки: clang, Java 21, aapt2 (около 200 МБ)"</string>
+    <string name="packages_source" formatted="false">"Codex CLI, git, curl, ssh, zip и их библиотеки берутся из официального репозитория Termux (packages.termux.dev) и сверяются с его SHA-256."</string>
+    <string name="install" formatted="false">"Установить"</string>
 </resources>

@@ -497,4 +497,27 @@
     <string name="model_list_refreshed" formatted="false">" · model list refreshed"</string>
     <string name="codex_update_failed" formatted="false">"Codex check failed: "</string>
     <string name="unexpected_codex_version" formatted="false">"Unexpected Codex version: "</string>
+    <string name="packages" formatted="false">"Packages"</string>
+    <string name="unknown_package" formatted="false">"Unknown package: "</string>
+    <string name="package_checksum_mismatch" formatted="false">"Checksum mismatch: "</string>
+    <string name="packages_busy" formatted="false">"Packages are already being installed"</string>
+    <string name="packages_need_shell" formatted="false">"Start the terminal first: packages are installed through the ADB shell"</string>
+    <string name="reading_package_index" formatted="false">"Reading the Termux package index…"</string>
+    <string name="not_enough_space_for_packages" formatted="false">"Not enough free space: %1$d MB needed, %2$d MB free"</string>
+    <string name="packages_plan" formatted="false">"%1$d packages: %2$d MB to download, %3$d MB on disk"</string>
+    <string name="downloading_package" formatted="false">"%1$d/%2$d · downloading %3$s %4$s (%5$d MB)"</string>
+    <string name="unpacking_package" formatted="false">"%1$d/%2$d · unpacking %3$s"</string>
+    <string name="codex_cli_ready" formatted="false">"Codex CLI is ready. In Terminal run: codex login --device-auth, then codex"</string>
+    <string name="package_installation_failed" formatted="false">"Package installation failed: "</string>
+    <string name="installing_codex_and_tools" formatted="false">"Installing Codex and tools"</string>
+    <string name="packages_up_to_date" formatted="false">"All packages are up to date"</string>
+    <string name="packages_changed" formatted="false">"Installed or updated: %1$d"</string>
+    <string name="install_packages" formatted="false">"Install or update packages"</string>
+    <string name="packages_state" formatted="false">"Codex CLI %1$s · %2$d packages"</string>
+    <string name="packages_missing" formatted="false">"Codex CLI and tools are not installed yet. They install automatically on Wi-Fi when the terminal connects."</string>
+    <string name="packages_checking" formatted="false">"Checking installed packages…"</string>
+    <string name="packages_unavailable" formatted="false">"Package status appears when the terminal is running"</string>
+    <string name="include_build_tools" formatted="false">"Also build tools: clang, Java 21, aapt2 (about 200 MB more)"</string>
+    <string name="packages_source" formatted="false">"Codex CLI, git, curl, ssh, zip and their libraries come from the official Termux repository (packages.termux.dev) and are checked against its SHA-256 sums."</string>
+    <string name="install" formatted="false">"Install"</string>
 </resources>

@@ -158,6 +158,7 @@ public final class ShellService extends Service {
                     if(type=='D') terminal.feed(buffer,length);
                     else if(type=='S') {
                         status=new String(buffer,0,length,StandardCharsets.UTF_8); connected=true;
+                        Packages.automatic(ShellService.this);
                         // The keyboard/view can resize while the handshake is in flight.
                         resize(terminal.rows(),terminal.columns());
                     }

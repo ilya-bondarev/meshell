@@ -7,7 +7,7 @@
 | `src/services/` | Platform-independent rules; plain inputs and outputs |
 | `src/com/mesystem/shell/chat/` | Conversation coordination, context and retry policy |
 | `src/com/mesystem/shell/persistence/` | SQLite, migrations, backups and encrypted credentials |
-| `src/com/mesystem/shell/environment/` | Shell, files, device and USB adapters |
+| `src/com/mesystem/shell/environment/` | Shell, files, device and USB adapters; Termux package installer and xz decoder |
 | `src/com/mesystem/shell/modules/` | Built-in module implementations and action dispatch |
 | `src/com/mesystem/shell/transport/` | HTTP, SSE and the ChatGPT/Codex protocol |
 | `src/com/mesystem/shell/presentation/` | Views, drawing, formatting and locale resources |

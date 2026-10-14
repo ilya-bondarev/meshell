@@ -97,6 +97,7 @@ public final class FeatureTests {
             checks+=ManagementTests.run(c,new File(root,"management"));
             checks+=CompactTests.run();
             checks+=DomainTests.run();
+            checks+=PackageTests.run();
             for(String name:new String[]{"api_key","private_key","Authorization"})
                 check(SecretFields.sensitive(name),"secret field classified: "+name);
             check(!SecretFields.sensitive("public_key"),"public key remains visible");

@@ -3,8 +3,11 @@ package com.mesystem.shell;
 import android.content.Context;
 import android.os.Build;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.json.JSONArray;
@@ -28,6 +31,7 @@ final class AgentTools {
         "vault_list returns secret aliases and types, not values. env_secrets maps CLI environment variable names to vault aliases. Secret generation and file import keep secret values in the vault. "+
         "module_list lists modules, actions and parameters; module_run executes an enabled action. module_install and module_manage configure modules. "+
         "Chats have separate histories and cancellation, but share the phone, files and accounts. Tool calls are ordered; a sequence of calls is not a transaction. "+
+        "packages_install installs or updates Termux packages (Codex CLI, git, curl, ssh and zip by default; build_tools adds clang, Java and aapt2) into /data/local/tmp/meshell/toolusr, which is on PATH for run_shell and the terminal. "+
         "build_self builds a signed APK; install_self starts a separate updater and restarts the app. environment_info reports the update result. Build and installation are unavailable while other tasks are active. "+
         "Agent tasks run only during an active request, are displayed in a notification and can be stopped. They do not continue after the process stops or the request ends.";
 
@@ -66,6 +70,10 @@ final class AgentTools {
         tool(tools,"vault_import_file","Import a local secret file into the vault without sending its contents to the model.",new JSONObject()
             .put("name",field("string","Vault alias")) .put("kind",field("string","secret, json or signing"))
             .put("path",field("string","Absolute phone file path")) .put("delete_source",field("boolean","Delete source only after successful storage")),"name","kind","path");
+        tool(tools,"packages_install","Install or update Termux packages with their dependencies, downloaded from packages.termux.dev and SHA-256 checked.",new JSONObject()
+            .put("names",new JSONObject().put("type","array").put("items",new JSONObject().put("type","string")).put("description","Termux package names; default codex git curl openssh zip unzip"))
+            .put("build_tools",field("boolean","Also clang, lld, make, openjdk-21, aapt2, aapt"))
+            .put("upgrade",field("boolean","Also update every installed package")));
         tool(tools,"build_self","Build a signed MeShell APK from phone sources.",new JSONObject());
         tool(tools,"install_self","Install the built APK. App restarts; check environment_info afterwards.",new JSONObject());
         tool(tools,"module_list","List modules, states and actions. Use module_run for notes, device sensors and custom modules.",new JSONObject());
@@ -112,7 +120,7 @@ final class AgentTools {
                     .put("sol_migration_complete",context.getSharedPreferences("chat-ui",Context.MODE_PRIVATE).getBoolean("sol-migration-complete",false))
                     .put("source",ShellBroker.SOURCE).put("home",ShellBroker.HOME).put("shared","/sdcard/MeShell")
                     .put("usb",devices.usbDevices()).put("credentials",vault.list())
-                    .put("probe",shell.run("id; getenforce; command -v clang javac java adb; test ! -f "+ShellBroker.HOME+"/update-result.txt || cat "+ShellBroker.HOME+"/update-result.txt",10000,cancel).json());
+                    .put("probe",shell.run("id; getenforce; command -v codex git curl clang javac java adb; test ! -f "+ShellBroker.HOME+"/update-result.txt || cat "+ShellBroker.HOME+"/update-result.txt",10000,cancel).json());
                 break;
             case "run_shell": {
                 Map<String,String> env=new HashMap<>(); JSONObject names=args.optJSONObject("env_secrets");
@@ -174,6 +182,13 @@ final class AgentTools {
                 ShellBroker.Result result=shell.run("test -s "+ShellBroker.HOME+"/build/MeShell.apk || exit 2; test -s "+ShellBroker.HOME+
                     "/build/meshelld || exit 2; setsid sh "+ShellBroker.SOURCE+"/device/install_self.sh </dev/null >"+ShellBroker.HOME+"/update-result.txt 2>&1 &",5000,cancel);
                 value=result.json().put("state",result.exitCode==0?"Update scheduled; inspect update-result.txt after relaunch":"Build artifacts missing; nothing was scheduled"); break;
+            }
+            case "packages_install": {
+                List<String> names=new ArrayList<>(); JSONArray list=args.optJSONArray("names");
+                if(list!=null && list.length()>0) for(int i=0;i<list.length();i++) names.add(list.getString(i));
+                else names.addAll(Arrays.asList(Packages.CORE));
+                if(args.optBoolean("build_tools")) names.addAll(Arrays.asList(Packages.BUILD));
+                value=new Packages(context).install(names,args.optBoolean("upgrade"),text -> { },cancel); break;
             }
             case "module_list": value=new JSONObject().put("modules",((MeShellApp)context.getApplicationContext()).modules().list()); break;
             case "module_run": value=((MeShellApp)context.getApplicationContext()).modules().execute(args.getString("module"),args.getString("action"),args.optJSONObject("arguments")==null?new JSONObject():args.getJSONObject("arguments"),cancel); break;

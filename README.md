@@ -6,8 +6,47 @@ Android terminal and ChatGPT agent workspace. Native Java UI, SQLite chat histor
 
 - Android 10+ (API 29), ARM64.
 - English and Russian: **Settings → Language**.
+- The Codex CLI, git, curl and ssh install themselves on first start; see [Packages](#packages).
 - Chat uses your own ChatGPT/Codex sign-in. **Settings → Update Codex** fetches the latest `@openai/codex` release number so the model catalogue matches current Codex clients; it never goes below the built-in version.
 - Shell commands run as Android's ADB-shell user (uid 2000), not root. The app alone cannot start that privileged process.
+
+## Install
+
+Download [`MeShell.apk`](https://github.com/ilya-bondarev/meshell/releases/latest/download/MeShell.apk) from the latest [release](https://github.com/ilya-bondarev/meshell/releases), check it against the release's `SHA256SUMS`, and install it. Release APKs share one signing key (its certificate digest is in the release notes), so later releases install as updates. To build your own, see [Build](#build); an APK signed with another key must replace this one rather than update it.
+
+## Start the terminal
+
+After installing the APK, extract its broker and startup script on a computer with `adb`:
+
+```sh
+unzip -p MeShell.apk assets/meshelld > meshelld
+unzip -p MeShell.apk assets/start.sh > start.sh
+unzip -p MeShell.apk assets/mkshrc > mkshrc
+adb shell mkdir -p /data/local/tmp/meshell/home
+adb push meshelld start.sh /data/local/tmp/meshell/
+# Fresh installations only; preserve an existing customized .mkshrc.
+adb push mkshrc /data/local/tmp/meshell/home/.mkshrc
+adb shell chmod 700 /data/local/tmp/meshell/meshelld
+adb shell am start -W -n com.mesystem.shell/.MainActivity
+adb shell sh /data/local/tmp/meshell/start.sh
+```
+
+Rebooting the phone requires restarting the broker through ADB (wireless debugging works). Command-line tools are not embedded in the APK; see [Packages](#packages).
+
+## Packages
+
+The first time the terminal connects on Wi-Fi, MeShell installs the **Codex CLI**, git, curl, OpenSSH and zip/unzip (about 90 MB download, 370 MB on disk). **Settings → Packages** installs or updates them at any time and optionally adds the build tools: clang, lld, make, Java 21 and aapt2 (about 200 MB more). The agent can do the same with `packages_install`, including other Termux packages by name, for example `python`.
+
+Packages come from the official Termux repository (`packages.termux.dev`); the Termux app is not needed. MeShell resolves dependencies, checks every download against the repository index's SHA-256, rewrites the Termux prefix to `/data/local/tmp/meshell/toolusr`, and extracts the packages through the shell broker. They are on `PATH` in the terminal and in agent commands.
+
+Use Codex in the terminal:
+
+```sh
+codex login --device-auth
+codex
+```
+
+If ChatGPT rejects device sign-in, enable device code authorization for Codex in your ChatGPT security settings.
 
 ## Modules
 
@@ -54,28 +93,9 @@ Set `MESHELL_KEY_ALIAS` if your alias differs. The result is `build/MeShell.apk`
 
 ### On-phone build
 
-The supported layout is `/data/local/tmp/meshell/toolusr` (ARM64 tools) and `/data/local/tmp/meshell/home/sdk` (`android.jar`, `d8.jar`, `apksigner.jar`). `device/setup_toolchain.sh` checks an existing installation; it does **not** download tools. On-phone outputs go to `$HOME/build` and the build executes the Android integration suite before signing. Override the output directory with `MESHELL_BUILD_DIR`.
+The supported layout is `/data/local/tmp/meshell/toolusr` (ARM64 tools) and `/data/local/tmp/meshell/home/sdk` (`android.jar`, `d8.jar`, `apksigner.jar`). **Settings → Packages** with build tools fills `toolusr`; the SDK jars in `home/sdk` are copied separately. `device/setup_toolchain.sh` checks the installation. On-phone outputs go to `$HOME/build` and the build executes the Android integration suite before signing. Override the output directory with `MESHELL_BUILD_DIR`.
 
 The agent's `build_self` tool expects the sources in `/data/local/tmp/meshell/home/source` and a vault entry `meshell-signing` (kind `signing`, JSON with `keystore` as base64, `password` and optional `alias`).
-
-## Start the terminal
-
-After installing your signed APK, extract its broker and startup script on the build host:
-
-```sh
-unzip -p build/MeShell.apk assets/meshelld > build/meshelld
-unzip -p build/MeShell.apk assets/start.sh > build/start.sh
-unzip -p build/MeShell.apk assets/mkshrc > build/mkshrc
-adb shell mkdir -p /data/local/tmp/meshell/home
-adb push build/meshelld build/start.sh /data/local/tmp/meshell/
-# Fresh installations only; preserve an existing customized .mkshrc.
-adb push build/mkshrc /data/local/tmp/meshell/home/.mkshrc
-adb shell chmod 700 /data/local/tmp/meshell/meshelld
-adb shell am start -W -n com.mesystem.shell/.MainActivity
-adb shell sh /data/local/tmp/meshell/start.sh
-```
-
-Rebooting the phone requires restarting the broker through ADB. Tools such as curl, a JDK or Clang are provisioned separately; they are not embedded in the APK.
 
 ## Share modules
 
