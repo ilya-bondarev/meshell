@@ -32,11 +32,11 @@ sh build.sh --unsigned
 The unsigned, aligned APK is `build/aligned.apk`; it cannot be installed until signed. The build runs repository, broker and file-write gates, compiles Android integration tests, and executes plain-Java domain tests. Device integration tests are a separate step:
 
 ```sh
-# An Android 15 device/emulator connected to adb; no app installation required.
+# An Android 14 emulator or an Android 14/15 phone connected to adb; no app installation required.
 sh tests/run_device.sh
 ```
 
-The integration harness uses Android internal APIs and is verified on Android 15. This is not a claim of test-harness compatibility with every supported app version.
+The integration harness uses Android internal APIs. It passes on an Android 14 (API 34) emulator and an Android 15 phone; the stock Android 15 emulator images fail to load their system font map under `app_process`. This is not a claim of test-harness compatibility with every supported app version.
 
 ### Signing
 
@@ -86,7 +86,7 @@ Exports remove local working directories and personal vault alias names. Recipie
 
 See [architecture](docs/ARCHITECTURE.md), [security](SECURITY.md), [contributing](CONTRIBUTING.md) and [changes](CHANGELOG.md).
 
-GitHub's **Verify** workflow scans history for secrets, builds the APK and runs the integration tests in an Android 15 emulator.
+GitHub's **Verify** workflow scans history for secrets, builds the APK and runs the integration tests in an Android 14 (API 34) emulator.
 
 ## License
 

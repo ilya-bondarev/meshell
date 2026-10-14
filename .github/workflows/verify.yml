@@ -24,7 +24,7 @@ jobs:
         run: |
           export JAVA_HOME="$JAVA_HOME_17_X64"
           export PATH="$JAVA_HOME/bin:$PATH"
-          sdkmanager --package_file=tools/sdk-packages.txt
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --package_file=tools/sdk-packages.txt
           sh build.sh --unsigned
       - name: Enable KVM
         run: |
@@ -34,7 +34,7 @@ jobs:
       - name: Android integration tests
         uses: ReactiveCircus/android-emulator-runner@69c8581131285561115a2e413eb0037446bdc2d6
         with:
-          api-level: 35
+          api-level: 34
           arch: x86_64
           target: default
           disable-animations: true
