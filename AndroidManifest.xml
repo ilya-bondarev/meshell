@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mesystem.shell" android:versionCode="21" android:versionName="0.9.5">
+    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="34" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+    <application android:name=".MeShellApp" android:label="MeShell" android:icon="@drawable/icon"
+        android:theme="@style/MeShellTheme"
+        android:allowBackup="false" android:supportsRtl="false"
+        android:usesCleartextTraffic="false">
+        <activity android:name=".MainActivity" android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".ShellService" android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-controlled local terminal session" />
+        </service>
+        <service android:name=".AgentService" android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Explicit user-requested AI tasks with visible progress and cancellation" />
+        </service>
+        <provider android:name=".BootstrapProvider" android:exported="true"
+            android:authorities="com.mesystem.shell.bootstrap"
+            android:permission="android.permission.DUMP" />
+        <receiver android:name=".UsbPermissionReceiver" android:exported="false" />
+    </application>
+</manifest>

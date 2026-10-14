@@ -1,0 +1,41 @@
+name: Verify
+on: [push, pull_request]
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Scan history
+        run: |
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/gitleaks.tar.gz" https://github.com/gitleaks/gitleaks/releases/download/v8.24.2/gitleaks_8.24.2_linux_x64.tar.gz
+          echo "fa0500f6b7e41d28791ebc680f5dd9899cd42b58629218a5f041efa899151a8e  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git --redact --log-opts=--all .
+      - name: Build and offline tests
+        run: |
+          export JAVA_HOME="$JAVA_HOME_17_X64"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          sdkmanager --package_file=tools/sdk-packages.txt
+          sh build.sh --unsigned
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Android integration tests
+        uses: ReactiveCircus/android-emulator-runner@69c8581131285561115a2e413eb0037446bdc2d6
+        with:
+          api-level: 35
+          arch: x86_64
+          target: default
+          disable-animations: true
+          script: sh tests/run_device.sh

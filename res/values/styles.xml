@@ -1,0 +1,33 @@
+<resources>
+    <style name="MeShellTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorPrimary">#111F2C</item>
+        <item name="android:colorPrimaryDark">#0A131D</item>
+        <item name="android:colorAccent">#70EDC8</item>
+        <item name="android:colorControlActivated">#70EDC8</item>
+        <item name="android:colorControlNormal">#93A8BB</item>
+        <item name="android:colorControlHighlight">#2470EDC8</item>
+        <item name="android:textColorPrimary">#EEF4FA</item>
+        <item name="android:textColorSecondary">#93A8BB</item>
+        <item name="android:textColorHint">#60778B</item>
+        <item name="android:windowBackground">#0A131D</item>
+        <item name="android:colorBackground">#111F2C</item>
+        <item name="android:statusBarColor">#0A131D</item>
+        <item name="android:navigationBarColor">#0A131D</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:alertDialogTheme">@style/MeShellDialog</item>
+    </style>
+    <!-- Dialogs share the app palette: rounded panel, mint actions. -->
+    <style name="MeShellDialog" parent="android:style/Theme.Material.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/dialog_bg</item>
+        <item name="android:colorAccent">#70EDC8</item>
+        <item name="android:colorControlActivated">#70EDC8</item>
+        <item name="android:colorControlHighlight">#2470EDC8</item>
+        <item name="android:textColorPrimary">#EEF4FA</item>
+        <item name="android:textColorSecondary">#93A8BB</item>
+        <item name="android:textColorHint">#60778B</item>
+        <item name="android:colorBackground">#152434</item>
+    </style>
+</resources>

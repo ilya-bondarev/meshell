@@ -1,0 +1,32 @@
+# Native Android mksh environment. Executables belong in $HOME/bin.
+export PS1='${PWD##*/} $ '
+export HISTSIZE=2000
+set -o emacs
+alias ll='ls -lah'
+alias workspace='cd /sdcard/MeShell'
+alias home='cd "$HOME"'
+device-info() {
+    id
+    printf 'Android '; getprop ro.build.version.release
+    printf 'Model   '; getprop ro.product.model
+    printf 'ABI     '; getprop ro.product.cpu.abi
+    printf 'SELinux '; getenforce
+    printf 'Boot    '; getprop ro.boot.verifiedbootstate
+    df -h /data
+}
+help() {
+    printf '%s\n' \
+      'MeShell | native Android shell + PTY' \
+      'device-info             device and current privileges' \
+      'workspace               /sdcard/MeShell (shared project files)' \
+      'home                    private shell home; binaries in $HOME/bin' \
+      'pm list packages --user 0  installed packages' \
+      'settings list system    Android settings' \
+      'logcat -d -t 50          recent system log' \
+      'toybox                  built-in command list' \
+      'Ctrl-C / Tab / arrows   interrupt, completion, history' \
+      'exit                    end shell; reconnect opens a new one'
+}
+printf '\033[1;32mMeShell\033[0m | Android native | '
+id -un
+printf 'Projects: /sdcard/MeShell\n'
