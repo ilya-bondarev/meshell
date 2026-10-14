@@ -1,5 +1,7 @@
 # MeShell
 
+<p align="center"><img src="docs/fox.gif" width="720" alt="The MeShell fox: it follows your finger, hops when tapped and blinks while planets orbit around it."></p>
+
 Android terminal and ChatGPT agent workspace. Native Java UI, SQLite chat history, an authenticated ADB-shell broker and a small set of built-in modules. No Gradle or third-party runtime libraries are bundled.
 
 - Android 10+ (API 29), ARM64.
@@ -12,7 +14,6 @@ Android terminal and ChatGPT agent workspace. Native Java UI, SQLite chat histor
 | Module | What it does |
 | --- | --- |
 | Notes | Local text notes stored on the phone; send a note to chat. |
-| Yandex Metrika | Counters and visit statistics for profiles you add with your own OAuth token. |
 | Device | CPU, memory, battery, network traffic and sensor monitor. |
 
 Custom modules are JSON definitions of shell actions. Create them in **Modules → +**, import a JSON file, or ask the agent to write one. The [`meshell-tools`](https://github.com/ilya-bondarev/meshell-tools) catalogue collects shareable definitions.

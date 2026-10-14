@@ -179,10 +179,10 @@ final class SettingsPage extends ScrollView {
     private void editSecret(String existing,String existingKind,String imported) {
         Context c=getContext(); LinearLayout form=Ui.column(c); Ui.pad(form,22,8,22,8);
         EditText name=entry(Language.text(R.string.secret_name),false); if(existing!=null) name.setText(existing); form.addView(name);
-        String[] kinds={"secret","metrika","json"}; Spinner type=new Spinner(c);
+        String[] kinds={"secret","json"}; Spinner type=new Spinner(c);
         type.setAdapter(new ArrayAdapter<>(c,android.R.layout.simple_spinner_dropdown_item,kinds));
         for(int i=0;i<kinds.length;i++) if(kinds[i].equals(existingKind)) type.setSelection(i); form.addView(type);
-        EditText value=entry(Language.text(R.string.new_value_profile_json),true); value.setMinLines(4); value.setMaxLines(9);
+        EditText value=entry(Language.text(R.string.new_value_or_json),true); value.setMinLines(4); value.setMaxLines(9);
         if(imported!=null) value.setText(imported); form.addView(value);
         AlertDialog dialog=new AlertDialog.Builder(c).setTitle(existingKind==null?Language.text(R.string.add_secret):Language.text(R.string.replace_secret))
             .setView(form).setNegativeButton(Language.text(R.string.cancel),null).setPositiveButton(Language.text(R.string.save),null).create();

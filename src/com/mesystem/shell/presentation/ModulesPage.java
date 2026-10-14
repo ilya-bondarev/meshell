@@ -7,7 +7,6 @@ import android.content.ClipboardManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -69,7 +67,6 @@ final class ModulesPage extends LinearLayout {
         title.setText(label); subtitle.setText(Language.text(R.string.meshell));
         switch(id) {
             case "notes": notes(); break;
-            case "metrika": metrika(); break;
             case "device": monitor=new MonitorPage(activity,hub); stage.addView(monitor); monitor.active(active); break;
             default: extension(id); break;
         }
@@ -199,47 +196,6 @@ final class ModulesPage extends LinearLayout {
         actions.addView(new IconView(activity,IconView.TRASH,Language.text(R.string.delete_note),v -> new AlertDialog.Builder(activity).setTitle(Language.text(R.string.delete_note_2))
             .setNegativeButton(Language.text(R.string.cancel),null).setPositiveButton(Language.text(R.string.delete_2),(d,w) -> { main.removeCallbacks(save); changed[0]=false; if(id[0]>0) hub.deleteNote(id[0]); open("notes"); }).show()),Ui.size(activity,44,44));
         body.addView(actions); leave=() -> { main.removeCallbacks(save); save.run(); };
-    }
-    private void metrika() {
-        LinearLayout body=body(); TextView status=status(body,Language.text(R.string.loading_counters)); LinearLayout results=Ui.column(activity); body.addView(results);
-        action(body,Language.text(R.string.refresh_counters),false,() -> loadCounters(status,results)); action(body,Language.text(R.string.add_yandex_profile),false,this::addMetrika);
-        loadCounters(status,results);
-    }
-    private void loadCounters(TextView status,LinearLayout results) {
-        job(status,c -> hub.metrika.counters(c),data -> {
-            results.removeAllViews(); JSONArray counters=data.optJSONArray("counters");
-            if(counters==null || counters.length()==0) status(results,Language.text(R.string.no_counters));
-            else for(int i=0;i<counters.length();i++) { JSONObject item=counters.optJSONObject(i); if(item==null) continue;
-                card(results,item.optString("name"),item.optString("site")+" · "+item.optLong("id"),IconView.CHART,() -> metrikaReport(item,7)); }
-            JSONArray errors=data.optJSONArray("errors"); if(errors!=null && errors.length()>0) status.setText(errors.toString());
-        });
-    }
-    private void addMetrika() {
-        LinearLayout form=Ui.column(activity); Ui.pad(form,18,8,18,8); EditText label=edit(Language.text(R.string.profile_name),false),token=edit("OAuth token · metrika:read",false);
-        token.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD); form.addView(label); Ui.gap(form,10); form.addView(token);
-        AlertDialog dialog=new AlertDialog.Builder(activity).setTitle(Language.text(R.string.yandex_metrika_profile)).setView(form).setNegativeButton(Language.text(R.string.cancel),null).setPositiveButton(Language.text(R.string.connect),null).create();
-        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            try { if(token.length()==0) throw new IllegalArgumentException(Language.text(R.string.enter_oauth_token));
-                hub.vault.put("yandex-metrika-"+UUID.randomUUID().toString().substring(0,8),"metrika",new JSONObject().put("token",token.getText().toString().trim()).put("label",label.getText().toString()));
-                dialog.dismiss(); open("metrika");
-            } catch(Exception e) { toast(e.getMessage()); }
-        })); dialog.show();
-    }
-    private void metrikaReport(JSONObject counter,int days) {
-        stage.removeAllViews(); screenEpoch++; LinearLayout body=body(); title.setText(counter.optString("name")); subtitle.setText(counter.optString("site"));
-        LinearLayout periods=Ui.row(activity); body.addView(periods);
-        for(int range:new int[]{7,30,90}) { Button b=Ui.button(activity,range+Language.text(R.string.days),range==days,v -> metrikaReport(counter,range)); LayoutParams p=new LayoutParams(0,Ui.dp(activity,42),1); p.rightMargin=Ui.dp(activity,6); periods.addView(b,p); }
-        Ui.gap(body,18); TextView status=status(body,Language.text(R.string.loading_statistics)); LinearLayout report=Ui.column(activity); body.addView(report);
-        job(status,c -> hub.metrika.report(new JSONObject().put("profile",counter.getString("profile")).put("counter",counter.getLong("id")).put("days",days),c),data -> {
-            JSONArray totals=data.optJSONArray("totals"),rows=data.optJSONArray("data"); String[] labels={Language.text(R.string.visits),Language.text(R.string.visitors),Language.text(R.string.page_views)};
-            LinearLayout numbers=Ui.row(activity); report.addView(numbers);
-            for(int i=0;i<3;i++) { LinearLayout cell=Ui.column(activity); cell.addView(Ui.bold(activity,totals==null?"—":java.text.NumberFormat.getIntegerInstance().format(totals.optDouble(i)),22,Ui.INK)); Ui.gap(cell,7); cell.addView(Ui.text(activity,labels[i],11,Ui.MUTED)); numbers.addView(cell,new LayoutParams(0,-2,1)); }
-            Ui.gap(report,22); SparkView graph=new SparkView(activity,false); report.addView(graph,Ui.size(activity,-1,150));
-            if(rows!=null) { float[] values=new float[rows.length()]; for(int i=0;i<values.length;i++) values[i]=(float)rows.optJSONObject(i).optJSONArray("metrics").optDouble(0); graph.set(values); }
-            Ui.gap(report,16); status(report,Language.text(R.string.last)+days+Language.text(R.string.complete_days)+(data.optBoolean("sampled")?Language.text(R.string.sampled_api_data):Language.text(R.string.unsampled_api_data)));
-            if(totals!=null && totals.length()>4) status(report,String.format(Language.locale(),Language.text(R.string.bounce_rate_1f_average_visit_0f_seconds),totals.optDouble(3),totals.optDouble(4)));
-            action(report,Language.text(R.string.discuss_statistics_with_gpt),false,() -> toChat.accept(Language.text(R.string.analyze_yandex_metrika_statistics_for)+counter.optString("name")+":\n"+data.toString()));
-        });
     }
     private void extension(String id) {
         LinearLayout body=body(); TextView status=status(body,"");

@@ -145,8 +145,6 @@
     <string name="unknown_shell_response" formatted="false">"Unknown shell response"</string>
     <string name="notes" formatted="false">"Notes"</string>
     <string name="local_text_notes" formatted="false">"Local text notes"</string>
-    <string name="metrika" formatted="false">"Metrika"</string>
-    <string name="yandex_counters" formatted="false">"Yandex counters"</string>
     <string name="device" formatted="false">"Device"</string>
     <string name="cpu_memory_and_sensors" formatted="false">"CPU, memory and sensors"</string>
     <string name="module_queue_busy" formatted="false">"Module queue busy"</string>
@@ -372,26 +370,6 @@
     <string name="send_note_to_chat" formatted="false">"Send note to chat"</string>
     <string name="delete_note" formatted="false">"Delete note"</string>
     <string name="delete_note_2" formatted="false">"Delete note?"</string>
-    <string name="loading_counters" formatted="false">"Loading counters…"</string>
-    <string name="refresh_counters" formatted="false">"Refresh counters"</string>
-    <string name="add_yandex_profile" formatted="false">"Add Yandex profile"</string>
-    <string name="no_counters" formatted="false">"No counters"</string>
-    <string name="profile_name" formatted="false">"Profile name"</string>
-    <string name="yandex_metrika_profile" formatted="false">"Yandex Metrika profile"</string>
-    <string name="connect" formatted="false">"Connect"</string>
-    <string name="enter_oauth_token" formatted="false">"Enter OAuth token"</string>
-    <string name="days" formatted="false">" days"</string>
-    <string name="loading_statistics" formatted="false">"Loading statistics…"</string>
-    <string name="visits" formatted="false">"Visits"</string>
-    <string name="visitors" formatted="false">"Visitors"</string>
-    <string name="page_views" formatted="false">"Page views"</string>
-    <string name="last" formatted="false">"Last "</string>
-    <string name="complete_days" formatted="false">" complete days\n"</string>
-    <string name="sampled_api_data" formatted="false">"Sampled API data"</string>
-    <string name="unsampled_api_data" formatted="false">"Unsampled API data"</string>
-    <string name="bounce_rate_1f_average_visit_0f_seconds" formatted="false">"Bounce rate: %.1f%%\nAverage visit: %.0f seconds"</string>
-    <string name="discuss_statistics_with_gpt" formatted="false">"Discuss statistics with GPT"</string>
-    <string name="analyze_yandex_metrika_statistics_for" formatted="false">"Analyze Yandex Metrika statistics for "</string>
     <string name="refresh" formatted="false">"Refresh"</string>
     <string name="copy_text" formatted="false">"Copy text"</string>
     <string name="cpu" formatted="false">"CPU"</string>
@@ -465,7 +443,7 @@
     <string name="use_one_reset" formatted="false">"Use one reset?"</string>
     <string name="one_quota_reset_will_be_used" formatted="false">"One quota reset will be used."</string>
     <string name="use" formatted="false">"Use"</string>
-    <string name="new_value_profile_json" formatted="false">"New value / profile JSON"</string>
+    <string name="new_value_or_json" formatted="false">"New value or JSON"</string>
     <string name="add_secret" formatted="false">"Add secret"</string>
     <string name="replace_secret" formatted="false">"Replace secret"</string>
     <string name="enter_a_value" formatted="false">"Enter a value"</string>
@@ -482,7 +460,6 @@
     <string name="available_resets_2" formatted="false">"Available resets: "</string>
     <string name="updated" formatted="false">"\nUpdated "</string>
     <string name="meshell_terminal_tap_for_keyboard_scroll_for_history" formatted="false">"MeShell terminal. Tap for keyboard; scroll for history."</string>
-    <string name="response_exceeds_4_mib" formatted="false">"Response exceeds 4 MiB"</string>
     <string name="server_response_exceeds_the_limit" formatted="false">"Server response exceeds the limit"</string>
     <string name="sign_in_expired_reconnect_chatgpt" formatted="false">"Sign-in expired. Reconnect ChatGPT."</string>
     <string name="quota_exhausted_or_too_many_requests_try_later" formatted="false">"Quota exhausted or too many requests. Try later."</string>

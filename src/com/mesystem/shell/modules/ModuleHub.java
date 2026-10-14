@@ -12,20 +12,18 @@ final class ModuleHub {
     private final ModuleDefinition definitions;
     final SecretVault vault;
     final ShellBroker shell;
-    final MetrikaModule metrika;
     final TelemetryModule telemetry;
     private final java.util.concurrent.ExecutorService jobsExecutor=java.util.concurrent.Executors.newFixedThreadPool(2);
     private final java.util.LinkedHashMap<String,JSONObject> jobs=new java.util.LinkedHashMap<>();
     final SharedPreferences prefs;
     private String[][] builtins() { return new String[][]{
         {"notes",Language.text(R.string.notes),Language.text(R.string.local_text_notes),"28"},
-        {"metrika",Language.text(R.string.metrika),Language.text(R.string.yandex_counters),"26"},
         {"device",Language.text(R.string.device),Language.text(R.string.cpu_memory_and_sensors),"24"}
     }; }
     ModuleHub(Context context) {
         definitions=new ModuleDefinition(context.getResources());
         store=new ModuleStore(context); vault=((MeShellApp)context).vault(); shell=new ShellBroker(context);
-        metrika=new MetrikaModule(vault); prefs=context.getSharedPreferences("modules",Context.MODE_PRIVATE);
+        prefs=context.getSharedPreferences("modules",Context.MODE_PRIVATE);
         telemetry=new TelemetryModule(context,shell);
     }
     JSONArray extensions() throws Exception { return store.extensions(); }
@@ -64,7 +62,6 @@ final class ModuleHub {
     private String description(String id) {
         switch(id) {
             case "notes": return "list {}; save {id?:number,title,text}; delete {id}";
-            case "metrika": return "counters {}; report {profile,counter:number,days:1..90}";
             case "device": return "sample {} (CPU needs two samples); sensors {}";
             default: return "";
         }
@@ -96,10 +93,6 @@ final class ModuleHub {
                 if(action.equals("list")) return new JSONObject().put("notes",store.notes());
                 if(action.equals("save")) return new JSONObject().put("id",store.saveNote(args.optLong("id"),args.optString("title",Language.text(R.string.note)),args.getString("text")));
                 if(action.equals("delete")) { store.deleteNote(args.getLong("id")); return new JSONObject().put("deleted",true); }
-                break;
-            case "metrika":
-                if(action.equals("counters")) return metrika.counters(cancel);
-                if(action.equals("report")) return metrika.report(args,cancel);
                 break;
             case "device":
                 if(action.equals("sample")) return telemetry.sample(cancel);

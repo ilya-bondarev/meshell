@@ -145,8 +145,6 @@
     <string name="unknown_shell_response" formatted="false">"Неизвестный ответ shell"</string>
     <string name="notes" formatted="false">"Заметки"</string>
     <string name="local_text_notes" formatted="false">"Локальные текстовые заметки"</string>
-    <string name="metrika" formatted="false">"Метрика"</string>
-    <string name="yandex_counters" formatted="false">"Сайты и счётчики Яндекса"</string>
     <string name="device" formatted="false">"Устройство"</string>
     <string name="cpu_memory_and_sensors" formatted="false">"CPU, память и датчики"</string>
     <string name="module_queue_busy" formatted="false">"Очередь модулей занята"</string>
@@ -372,26 +370,6 @@
     <string name="send_note_to_chat" formatted="false">"Отправить заметку в чат"</string>
     <string name="delete_note" formatted="false">"Удалить заметку"</string>
     <string name="delete_note_2" formatted="false">"Удалить заметку?"</string>
-    <string name="loading_counters" formatted="false">"Подключаю счётчики…"</string>
-    <string name="refresh_counters" formatted="false">"Обновить счётчики"</string>
-    <string name="add_yandex_profile" formatted="false">"Подключить ещё профиль Яндекса"</string>
-    <string name="no_counters" formatted="false">"Нет счётчиков"</string>
-    <string name="profile_name" formatted="false">"Название профиля"</string>
-    <string name="yandex_metrika_profile" formatted="false">"Профиль Яндекс Метрики"</string>
-    <string name="connect" formatted="false">"Подключить"</string>
-    <string name="enter_oauth_token" formatted="false">"Введи OAuth token"</string>
-    <string name="days" formatted="false">" дней"</string>
-    <string name="loading_statistics" formatted="false">"Запрашиваю статистику…"</string>
-    <string name="visits" formatted="false">"Визиты"</string>
-    <string name="visitors" formatted="false">"Посетители"</string>
-    <string name="page_views" formatted="false">"Просмотры"</string>
-    <string name="last" formatted="false">"Последние "</string>
-    <string name="complete_days" formatted="false">" завершённых дней · по вчера\n"</string>
-    <string name="sampled_api_data" formatted="false">"API использует выборку"</string>
-    <string name="unsampled_api_data" formatted="false">"Данные API без выборки"</string>
-    <string name="bounce_rate_1f_average_visit_0f_seconds" formatted="false">"Отказы: %.1f%%\nСредний визит: %.0f секунд"</string>
-    <string name="discuss_statistics_with_gpt" formatted="false">"Обсудить статистику с GPT"</string>
-    <string name="analyze_yandex_metrika_statistics_for" formatted="false">"Разбери статистику Яндекс Метрики для "</string>
     <string name="refresh" formatted="false">"Обновить сведения"</string>
     <string name="copy_text" formatted="false">"Копировать текст"</string>
     <string name="cpu" formatted="false">"Процессор"</string>
@@ -465,7 +443,7 @@
     <string name="use_one_reset" formatted="false">"Использовать один сброс?"</string>
     <string name="one_quota_reset_will_be_used" formatted="false">"Будет использован один сброс лимита."</string>
     <string name="use" formatted="false">"Использовать"</string>
-    <string name="new_value_profile_json" formatted="false">"Новое значение / JSON профиля"</string>
+    <string name="new_value_or_json" formatted="false">"Новое значение или JSON"</string>
     <string name="add_secret" formatted="false">"Добавить секрет"</string>
     <string name="replace_secret" formatted="false">"Заменить секрет"</string>
     <string name="enter_a_value" formatted="false">"Введи значение"</string>
@@ -482,7 +460,6 @@
     <string name="available_resets_2" formatted="false">"Доступно сбросов: "</string>
     <string name="updated" formatted="false">"\nОбновлено "</string>
     <string name="meshell_terminal_tap_for_keyboard_scroll_for_history" formatted="false">"Терминал MeShell. Нажми для клавиатуры; листай для истории вывода."</string>
-    <string name="response_exceeds_4_mib" formatted="false">"Ответ больше 4 МиБ"</string>
     <string name="server_response_exceeds_the_limit" formatted="false">"Ответ сервера превышает лимит"</string>
     <string name="sign_in_expired_reconnect_chatgpt" formatted="false">"Вход истёк. Подключи ChatGPT снова."</string>
     <string name="quota_exhausted_or_too_many_requests_try_later" formatted="false">"Лимит подписки исчерпан или слишком много запросов. Повтори позже."</string>

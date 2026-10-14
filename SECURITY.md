@@ -11,7 +11,7 @@ MeShell is a command-execution application, not an isolation boundary for untrus
 - Self-updates require the existing signing identity. The updater attempts rollback, but cannot guarantee recovery after abrupt termination or power loss.
 - HTTPS and Android permissions remain enforced. No safety claim is made for arbitrary imported shell modules.
 
-Chat requests send the selected conversation context and attachments to OpenAI under your ChatGPT account. The Codex update check reads the public npm registry. The Metrika module calls Yandex with the token you store. Review provider terms, retention and costs before use.
+Chat requests send the selected conversation context and attachments to OpenAI under your ChatGPT account. The Codex update check reads the public npm registry. Review provider terms, retention and costs before use.
 
 ## Publishing
 
