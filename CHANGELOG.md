@@ -6,6 +6,8 @@
 - **Permissions** in the module contract (`network`, `storage`, `screen`, `system`, `secrets`, `packages`), detected from commands and fields; undeclared ones are rejected and a module runs only after the user approves them. Modules installed before 0.10.0 keep running.
 - `packages` field: Termux packages a module needs, installed before its first run.
 - **Publish to catalogue** from the module menu: the submission is filed on GitHub from the connected account or a prefilled browser form; rules are in **Modules → + → Publish to catalogue**.
+- **Wanted modules**: open requests from the catalogue with their votes; **Build** hands a request to the chat, so anyone can be its first author.
+- **Share** a catalogue module as a link to its entry on the catalogue site.
 - Agent tool `module_catalog` searches the catalogue.
 
 ## 0.9.7
