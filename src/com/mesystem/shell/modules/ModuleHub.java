@@ -72,8 +72,7 @@ final class ModuleHub {
                 .put("source",meta==null?"local":meta.optString("source","local"));
             if(meta!=null) for(String key:new String[]{"version","author","github","category"}) if(meta.has(key)) item.put(key,meta.get(key));
             if(meta!=null && meta.has("icon")) item.put("icon_name",meta.getString("icon"));
-            JSONObject local=meta==null?null:Marketplace.translation(meta);
-            if(local!=null) { if(!local.optString("title").isEmpty()) item.put("title",local.getString("title")); if(!local.optString("description").isEmpty()) item.put("description",local.getString("description")); }
+            if(meta!=null) Marketplace.localize(item,Marketplace.translation(meta));
             out.put(item);
         }
         return out;

@@ -83,7 +83,10 @@ final class ModulesPage extends LinearLayout {
     }
     private static boolean top(String id) { return id.isEmpty() || id.equals(STORE); }
     void open(String id) {
-        if(top(id)) history.clear(); else if(!id.equals(current)) history.push(current);
+        // Reopening a screen that is already behind this one returns to it, so module ↔ catalogue page links do not loop.
+        if(top(id)) history.clear();
+        else if(history.contains(id)) { while(!history.isEmpty() && !history.pop().equals(id)) { } }
+        else if(!id.equals(current)) history.push(current);
         show(id);
     }
     private void show(String id) {
@@ -242,7 +245,10 @@ final class ModulesPage extends LinearLayout {
         });
     }
     private void details(String title,String value) {
-        TextView text=Ui.text(activity,value,13,Ui.INK); text.setLineSpacing(Ui.dp(activity,3),1); Ui.pad(text,22,12,22,20); text.setTextIsSelectable(true); ScrollView scroll=new ScrollView(activity); scroll.addView(text);
+        // Command output keeps its columns: monospace, no wrapping, wide lines scroll sideways.
+        TextView text=Ui.text(activity,value,12,Ui.INK); text.setTypeface(android.graphics.Typeface.MONOSPACE); text.setLineSpacing(Ui.dp(activity,2),1); Ui.pad(text,22,12,22,20); text.setTextIsSelectable(true);
+        android.widget.HorizontalScrollView wide=new android.widget.HorizontalScrollView(activity); wide.addView(text);
+        ScrollView scroll=new ScrollView(activity); scroll.addView(wide);
         new AlertDialog.Builder(activity).setTitle(title).setView(scroll).setPositiveButton(Language.text(R.string.close),null).setNeutralButton(Language.text(R.string.send_to_chat),(d,w) -> toChat.accept(value)).show();
     }
     void toast(String text) { Toast.makeText(activity,text,Toast.LENGTH_LONG).show(); }
@@ -345,7 +351,10 @@ final class ModulesPage extends LinearLayout {
             run.setEnabled(!waiting); }
         Ui.gap(body,8); body.addView(Ui.section(activity,Language.text(R.string.permissions)));
         market.permissionRows(body,module.optJSONArray("permissions"),module.optJSONArray("packages"));
-        if("catalog".equals(module.optString("source"))) action(body,Language.text(R.string.catalog_page),false,() -> open(ITEM+id));
+        if("catalog".equals(module.optString("source"))) {
+            action(body,Language.text(R.string.rate_module),false,() -> { try { JSONObject tool=hub.market.tool(id); if(tool==null) open(ITEM+id); else market.rate(tool); } catch(Exception e) { toast(e.getMessage()); } });
+            action(body,Language.text(R.string.catalog_page),false,() -> open(ITEM+id));
+        }
         else action(body,Language.text(R.string.publish_to_catalog),false,() -> market.publish(id));
     }
 }

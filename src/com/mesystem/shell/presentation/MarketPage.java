@@ -191,12 +191,14 @@ final class MarketPage {
         Set<String> present=new LinkedHashSet<>(); for(int i=0;i<tools.length();i++) present.add(tools.optJSONObject(i).optString("category"));
         chip(categories,Language.text(R.string.category_all),category.isEmpty(),() -> { category=""; results(); });
         for(String key:CATEGORIES) if(present.contains(key)) chip(categories,category(key),key.equals(category),() -> { category=key.equals(category)?"":key; results(); });
-        if(!refreshing) status.setText(Language.quantity(R.plurals.module_count,tools.length())+" · "+Language.text(R.string.catalog_updated)+time(market.fetched()));
         page.subtitle(Language.text(R.string.catalog_subtitle));
         List<Integer> shown;
         try { shown=MarketRules.arrange(Marketplace.listings(tools),query,category,order); } catch(Exception e) { status.setText(e.getMessage()); return; }
+        boolean filtered=!query.trim().isEmpty() || !category.isEmpty();
+        if(!refreshing) status.setText((filtered?shown.size()+" / ":"")+Language.quantity(R.plurals.module_count,tools.length())+" · "+Language.text(R.string.catalog_updated)+time(market.fetched()));
         if(shown.isEmpty()) empty(Language.text(R.string.nothing_found),Language.text(R.string.request_module),() -> page.browse(Marketplace.requestLink(query)));
         for(int index:shown) { LinearLayout.LayoutParams lp=Ui.size(activity,-1,-2); lp.bottomMargin=Ui.dp(activity,10); results.addView(listing(tools.optJSONObject(index)),lp); }
+        if(!filtered) wanted(results);
         invite(results);
     }
     private static String time(long value) {
@@ -209,6 +211,24 @@ final class MarketPage {
         TextView label=Ui.text(activity,text,14,Ui.INK); label.setGravity(Gravity.CENTER); box.addView(label); Ui.gap(box,12);
         box.addView(Ui.button(activity,action,false,v -> run.run()),Ui.size(activity,-2,42));
         LinearLayout.LayoutParams lp=Ui.size(activity,-1,-2); lp.bottomMargin=Ui.dp(activity,10); results.addView(box,lp);
+    }
+    /** Requests nobody has built yet: one tap hands the request to GPT, the other adds a vote on GitHub. */
+    private void wanted(LinearLayout parent) {
+        JSONArray requests=market.requests(); if(requests.length()==0) return;
+        Ui.gap(parent,6); parent.addView(Ui.section(activity,Language.text(R.string.wanted_title)));
+        TextView note=Ui.text(activity,Language.text(R.string.wanted_note),12,Ui.MUTED); Ui.pad(note,4,0,4,8); parent.addView(note);
+        for(int i=0;i<Math.min(5,requests.length());i++) {
+            JSONObject request=requests.optJSONObject(i); if(request==null) continue; String title=request.optString("title"),url=request.optString("url");
+            LinearLayout row=Ui.row(activity); row.setGravity(Gravity.CENTER_VERTICAL); Ui.pad(row,14,10,10,10); row.setBackground(Ui.shape(activity,Ui.PANEL,18,Ui.BORDER));
+            LinearLayout texts=Ui.column(activity);
+            TextView name=Ui.bold(activity,title,14,Ui.INK); name.setMaxLines(2); name.setEllipsize(android.text.TextUtils.TruncateAt.END); texts.addView(name); Ui.gap(texts,3);
+            TextView vote=Ui.bold(activity,"👍 "+request.optInt("votes")+" · "+Language.text(R.string.want_it_too),12,Ui.MINT); texts.addView(vote);
+            vote.setOnClickListener(v -> page.browse(url));
+            row.addView(texts,new LinearLayout.LayoutParams(0,-2,1));
+            Button build=Ui.button(activity,Language.text(R.string.build_it),true,v -> page.toChat.accept(Language.text(R.string.build_requested_module)+" "+title));
+            build.setTextSize(13); Ui.pad(build,14,0,14,0); row.addView(build,Ui.size(activity,-2,36));
+            LinearLayout.LayoutParams lp=Ui.size(activity,-1,-2); lp.bottomMargin=Ui.dp(activity,8); parent.addView(row,lp);
+        }
     }
     /** The publish invitation that ends the list: every reader is a potential author. */
     void invite(LinearLayout parent) {
@@ -225,22 +245,29 @@ final class MarketPage {
     }
     private View listing(JSONObject tool) {
         String id=tool.optString("id");
-        LinearLayout card=Ui.row(activity); card.setGravity(Gravity.TOP); Ui.pad(card,14,14,12,14); Ui.pressable(card,Ui.PANEL,20,Ui.BORDER);
+        LinearLayout card=Ui.column(activity); Ui.pad(card,14,14,12,14); Ui.pressable(card,Ui.PANEL,20,Ui.BORDER);
         card.setOnClickListener(v -> page.open(ModulesPage.ITEM+id)); card.setContentDescription(tool.optString("title"));
-        card.addView(Ui.badge(activity,glyph(tool),tint(tool),22),Ui.size(activity,46,46));
-        LinearLayout texts=Ui.column(activity); Ui.pad(texts,12,0,8,0);
-        TextView name=Ui.bold(activity,tool.optString("title"),15,Ui.INK); name.setSingleLine(true); name.setEllipsize(android.text.TextUtils.TruncateAt.END); texts.addView(name); Ui.gap(texts,4);
-        TextView by=Ui.text(activity,author(tool)+" · "+category(tool.optString("category")),12,Ui.MUTED); by.setSingleLine(true); by.setEllipsize(android.text.TextUtils.TruncateAt.END); texts.addView(by); Ui.gap(texts,7);
-        TextView figures=Ui.text(activity,"",12,Ui.INK); figures.setText(numbers(tool)); figures.setSingleLine(true); texts.addView(figures); Ui.gap(texts,7);
-        TextView about=Ui.text(activity,tool.optString("description"),13,Ui.MUTED); about.setMaxLines(2); about.setEllipsize(android.text.TextUtils.TruncateAt.END); about.setLineSpacing(Ui.dp(activity,2),1); texts.addView(about); Ui.gap(texts,7);
-        JSONArray needs=tool.optJSONArray("permissions"); boolean none=needs==null || needs.length()==0;
-        TextView rights=Ui.text(activity,permissions(needs),11,none?Ui.MINT:Ui.FAINT); rights.setSingleLine(true); rights.setEllipsize(android.text.TextUtils.TruncateAt.END); texts.addView(rights);
-        card.addView(texts,new LinearLayout.LayoutParams(0,-2,1));
+        LinearLayout top=Ui.row(activity); top.setGravity(Gravity.CENTER_VERTICAL);
+        top.addView(Ui.badge(activity,glyph(tool),tint(tool),22),Ui.size(activity,46,46));
+        LinearLayout names=Ui.column(activity); Ui.pad(names,12,0,8,0);
+        TextView name=Ui.bold(activity,tool.optString("title"),15,Ui.INK); name.setSingleLine(true); name.setEllipsize(android.text.TextUtils.TruncateAt.END); names.addView(name); Ui.gap(names,3);
+        String login=tool.optString("github");
+        TextView by=Ui.text(activity,(login.isEmpty()?tool.optString("author"):"@"+login)+" · "+category(tool.optString("category")),12,Ui.MUTED);
+        by.setSingleLine(true); by.setEllipsize(android.text.TextUtils.TruncateAt.END); names.addView(by);
+        top.addView(names,new LinearLayout.LayoutParams(0,-2,1));
         boolean installed=tool.optBoolean("installed"),update=Marketplace.update(tool);
         Button act=Ui.button(activity,Language.text(update?R.string.update:installed?R.string.open:R.string.get),!installed || update,v -> {
             if(installed && !update) page.open(id); else install(tool,status);
         });
-        act.setTextSize(13); Ui.pad(act,14,0,14,0); act.setEnabled(market.supported(tool)); card.addView(act,Ui.size(activity,-2,36));
+        act.setTextSize(13); Ui.pad(act,14,0,14,0); act.setEnabled(market.supported(tool)); top.addView(act,Ui.size(activity,-2,36));
+        card.addView(top);
+        // Figures, description and permissions use the full width under the title, aligned with it.
+        LinearLayout texts=Ui.column(activity); Ui.pad(texts,58,10,0,0);
+        TextView figures=Ui.text(activity,"",12,Ui.INK); figures.setText(numbers(tool)); figures.setSingleLine(true); figures.setEllipsize(android.text.TextUtils.TruncateAt.END); texts.addView(figures); Ui.gap(texts,6);
+        TextView about=Ui.text(activity,tool.optString("description"),13,Ui.MUTED); about.setMaxLines(2); about.setEllipsize(android.text.TextUtils.TruncateAt.END); about.setLineSpacing(Ui.dp(activity,2),1); texts.addView(about); Ui.gap(texts,6);
+        JSONArray needs=tool.optJSONArray("permissions"); boolean none=needs==null || needs.length()==0;
+        TextView rights=Ui.text(activity,permissions(needs),11,none?Ui.MINT:Ui.FAINT); rights.setSingleLine(true); rights.setEllipsize(android.text.TextUtils.TruncateAt.END); texts.addView(rights);
+        card.addView(texts);
         return card;
     }
 
@@ -248,7 +275,7 @@ final class MarketPage {
     void detail(LinearLayout body,String id) {
         JSONObject tool; try { tool=market.tool(id); } catch(Exception e) { tool=null; }
         if(tool==null) { body.addView(Ui.caption(activity,Language.text(R.string.not_in_catalog))); return; }
-        JSONObject item=tool; page.heading(item.optString("title"),author(item));
+        JSONObject item=tool; page.heading(Language.text(R.string.catalog),category(item.optString("category")));
         LinearLayout hero=Ui.row(activity); hero.setGravity(Gravity.CENTER_VERTICAL);
         hero.addView(Ui.badge(activity,glyph(item),tint(item),30),Ui.size(activity,64,64));
         LinearLayout names=Ui.column(activity); Ui.pad(names,14,0,0,0);
@@ -296,6 +323,7 @@ final class MarketPage {
         fact(body,Language.text(R.string.minimum_meshell),item.optString("min_app_version"));
         JSONArray requirements=item.optJSONArray("requirements"); if(requirements!=null && requirements.length()>0) fact(body,Language.text(R.string.requirements),join(requirements));
         Ui.gap(body,10);
+        body.addView(Ui.button(activity,Language.text(R.string.share),false,v -> share(item)),Ui.size(activity,-1,44)); Ui.gap(body,10);
         LinearLayout links=Ui.row(activity);
         links.addView(Ui.button(activity,Language.text(R.string.source_code),false,v -> { try { page.browse(Marketplace.sourceLink(item)); } catch(Exception ignored) { } }),new LinearLayout.LayoutParams(0,Ui.dp(activity,44),1));
         links.addView(new View(activity),Ui.size(activity,10,1));
@@ -340,6 +368,12 @@ final class MarketPage {
         for(int i=0;reviews!=null && i<reviews.length();i++) review(body,reviews.optJSONObject(i));
         if(votes>0) { TextView all=Ui.bold(activity,Language.text(R.string.all_reviews),13,Ui.MINT); Ui.pad(all,0,6,0,6);
             all.setOnClickListener(v -> { try { page.browse(Marketplace.reviewsLink(tool)); } catch(Exception ignored) { } }); body.addView(all); }
+    }
+    private void share(JSONObject tool) {
+        try {
+            String text=tool.optString("title")+" — "+tool.optString("description")+"\n"+Marketplace.shareLink(tool);
+            activity.startActivity(android.content.Intent.createChooser(new android.content.Intent(android.content.Intent.ACTION_SEND).setType("text/plain").putExtra(android.content.Intent.EXTRA_TEXT,text),tool.optString("title")));
+        } catch(Exception e) { page.toast(e.getMessage()); }
     }
     private void review(LinearLayout parent,JSONObject review) {
         if(review==null) return;

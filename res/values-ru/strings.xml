@@ -679,6 +679,12 @@
     <string name="module_checksum_mismatch" formatted="false">"Скачанный модуль не совпадает с контрольной суммой каталога"</string>
     <string name="response_too_large" formatted="false">"Слишком большой ответ: "</string>
     <string name="version_format" formatted="false">"Формат версии: 1.2.3"</string>
+    <string name="wanted_title" formatted="false">"Ждут авторов"</string>
+    <string name="wanted_note" formatted="false">"Таких модулей ещё нет. Сделайте с GPT и опубликуйте — ваш будет первым."</string>
+    <string name="build_it" formatted="false">"Сделать"</string>
+    <string name="want_it_too" formatted="false">"Тоже хочу"</string>
+    <string name="build_requested_module" formatted="false">"Создай модуль MeShell по этому запросу из каталога. Уточни только неясное, затем используй module_install. Запрос:"</string>
+    <string name="share" formatted="false">"Поделиться"</string>
     <plurals name="module_count"><item quantity="one">модуль</item><item quantity="few">модуля</item><item quantity="many">модулей</item><item quantity="other">модуля</item></plurals>
     <plurals name="rating_count"><item quantity="one">оценка</item><item quantity="few">оценки</item><item quantity="many">оценок</item><item quantity="other">оценки</item></plurals>
 </resources>

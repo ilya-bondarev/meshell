@@ -679,6 +679,12 @@
     <string name="module_checksum_mismatch" formatted="false">"The downloaded module does not match the catalogue checksum"</string>
     <string name="response_too_large" formatted="false">"Response is too large: "</string>
     <string name="version_format" formatted="false">"Version format: 1.2.3"</string>
+    <string name="wanted_title" formatted="false">"Wanted by users"</string>
+    <string name="wanted_note" formatted="false">"Nobody has built these yet. Make one with GPT and publish it: it will be the first."</string>
+    <string name="build_it" formatted="false">"Build"</string>
+    <string name="want_it_too" formatted="false">"Want it too"</string>
+    <string name="build_requested_module" formatted="false">"Create a MeShell module for this request from the catalogue. Ask only what is unclear, then use module_install. Request:"</string>
+    <string name="share" formatted="false">"Share"</string>
     <plurals name="module_count"><item quantity="one">module</item><item quantity="other">modules</item></plurals>
     <plurals name="rating_count"><item quantity="one">rating</item><item quantity="other">ratings</item></plurals>
 </resources>

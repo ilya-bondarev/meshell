@@ -60,6 +60,16 @@ final class Marketplace {
         JSONObject values=entry.optJSONObject("translations");
         return values==null?null:values.optJSONObject(Language.locale().getLanguage());
     }
+    /** Replaces the texts the target already has with their translations: title, description, README, requirements and action labels. */
+    static void localize(JSONObject target,JSONObject local) throws Exception {
+        if(local==null) return;
+        for(String key:new String[]{"title","description","readme"}) if(target.has(key) && !local.optString(key).trim().isEmpty()) target.put(key,local.getString(key));
+        if(target.has("requirements") && local.optJSONArray("requirements")!=null) target.put("requirements",local.getJSONArray("requirements"));
+        JSONObject labels=local.optJSONObject("actions"); JSONArray actions=target.optJSONArray("actions");
+        for(int i=0;labels!=null && actions!=null && i<actions.length();i++) {
+            JSONObject action=actions.optJSONObject(i); if(action!=null && !labels.optString(action.optString("id")).trim().isEmpty()) action.put("label",labels.getString(action.optString("id")));
+        }
+    }
     /** Catalogue entries with statistics, translations and the local install state. */
     JSONArray tools() throws Exception {
         JSONObject value=cached(); JSONArray out=new JSONArray(); if(value==null) return out;
@@ -73,14 +83,18 @@ final class Marketplace {
                 .put("histogram",numbers.optJSONArray("histogram")==null?new JSONArray("[0,0,0,0,0]"):numbers.getJSONArray("histogram"))
                 .put("reviews",numbers.optJSONArray("reviews")==null?new JSONArray():numbers.getJSONArray("reviews")).put("packages_size",numbers.optLong("packages_size"));
             StringBuilder search=new StringBuilder(tool.optString("title")+" "+tool.optString("description")+" "+tool.optString("author")+" "+tool.optString("github")+" "+id);
-            JSONObject local=translation(tool);
-            if(local!=null) for(String key:new String[]{"title","description"}) if(!local.optString(key).isEmpty()) { tool.put(key,local.getString(key)); search.append(' ').append(local.getString(key)); }
-            tool.put("search",search.toString());
+            localize(tool,translation(tool));
+            tool.put("search",search.append(' ').append(tool.optString("title")).append(' ').append(tool.optString("description")).toString());
             JSONObject module=installed.get(id);
             if(module!=null) tool.put("installed",true).put("installed_source",module.optString("source")).put("installed_version",module.optString("version"));
             out.put(tool);
         }
         return out;
+    }
+    /** Open module requests from the catalogue statistics, most wanted first. */
+    JSONArray requests() {
+        JSONObject value=cached(),stats=value==null?null:value.optJSONObject("stats");
+        JSONArray out=stats==null?null:stats.optJSONArray("requests"); return out==null?new JSONArray():out;
     }
     JSONObject tool(String id) throws Exception {
         JSONArray tools=tools(); for(int i=0;i<tools.length();i++) if(id.equals(tools.getJSONObject(i).getString("id"))) return tools.getJSONObject(i);
@@ -157,4 +171,6 @@ final class Marketplace {
     static String sourceLink(JSONObject tool) throws Exception { return PROJECT+"/tree/main/tools/"+tool.getString("id"); }
     static String reviewsLink(JSONObject tool) throws Exception { return PROJECT+"/issues?q="+java.net.URLEncoder.encode("is:issue \"[rating] "+tool.getString("id")+"\" in:title","UTF-8"); }
     static String profileLink(String login) { return "https://github.com/"+login; }
+    /** The catalogue web page entry: readable without the app and links to MeShell. */
+    static String shareLink(JSONObject tool) throws Exception { return SITE+"#"+tool.getString("id"); }
 }

@@ -82,7 +82,11 @@ final class Ui {
     /** Two or more segment buttons in one rounded track; callers mark the current one with {@link #selected}. */
     static LinearLayout tabs(Context c,Button... items) {
         LinearLayout tabs=row(c); tabs.setBackground(shape(c,PANEL,14,BORDER)); pad(tabs,4,4,4,4);
-        for(Button item:items) tabs.addView(item,new LinearLayout.LayoutParams(0,-1,1)); return tabs;
+        for(Button item:items) {
+            item.setSingleLine(true); item.setEllipsize(android.text.TextUtils.TruncateAt.END); item.setPadding(dp(c,6),0,dp(c,6),0);
+            tabs.addView(item,new LinearLayout.LayoutParams(0,-1,1));
+        }
+        return tabs;
     }
     /** Search field with a leading magnifier inside one rounded box. */
     static LinearLayout searchBox(Context c,EditText field) {
