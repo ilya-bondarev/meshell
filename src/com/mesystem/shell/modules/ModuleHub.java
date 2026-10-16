@@ -2,7 +2,9 @@ package com.mesystem.shell;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,21 +16,23 @@ final class ModuleHub {
     final ShellBroker shell;
     final TelemetryModule telemetry;
     final GitHubModule github;
+    final Marketplace market;
     private final Context context;
     private final java.util.concurrent.ExecutorService jobsExecutor=java.util.concurrent.Executors.newFixedThreadPool(2);
     private final java.util.LinkedHashMap<String,JSONObject> jobs=new java.util.LinkedHashMap<>();
     final SharedPreferences prefs;
+    /** id, title, description, icon, permissions. Built-in permissions use the module vocabulary plus Android's overlay. */
     private String[][] builtins() { return new String[][]{
-        {"notes",Language.text(R.string.notes),Language.text(R.string.local_text_notes),"28"},
-        {"device",Language.text(R.string.device),Language.text(R.string.cpu_memory_and_sensors),"24"},
-        {"mascot",Language.text(R.string.mascot_title),Language.text(R.string.mascot_description),"32"},
-        {"github","GitHub",Language.text(R.string.github_description),"36"}
+        {"notes",Language.text(R.string.notes),Language.text(R.string.local_text_notes),"28",""},
+        {"device",Language.text(R.string.device),Language.text(R.string.cpu_memory_and_sensors),"24",""},
+        {"mascot",Language.text(R.string.mascot_title),Language.text(R.string.mascot_description),"32","overlay"},
+        {"github","GitHub",Language.text(R.string.github_description),"36","network,secrets,packages"}
     }; }
     ModuleHub(Context context) {
         this.context=context; definitions=new ModuleDefinition(context.getResources());
         store=new ModuleStore(context); vault=((MeShellApp)context).vault(); shell=new ShellBroker(context);
         prefs=context.getSharedPreferences("modules",Context.MODE_PRIVATE);
-        telemetry=new TelemetryModule(context,shell); github=new GitHubModule(context,shell,vault);
+        telemetry=new TelemetryModule(context,shell); github=new GitHubModule(context,shell,vault); market=new Marketplace(context,this);
     }
     JSONArray extensions() throws Exception { return store.extensions(); }
     JSONArray notes() throws Exception { return store.notes(); }
@@ -58,10 +62,39 @@ final class ModuleHub {
     JSONArray list() throws Exception {
         JSONArray out=new JSONArray();
         for(String[] value:builtins()) out.put(new JSONObject().put("id",value[0]).put("title",value[1]).put("description",value[2])
-            .put("icon",Integer.parseInt(value[3])).put("enabled",enabled(value[0])).put("builtin",true).put("actions",description(value[0])));
+            .put("icon",Integer.parseInt(value[3])).put("enabled",enabled(value[0])).put("builtin",true).put("actions",description(value[0]))
+            .put("permissions",new JSONArray(value[4].isEmpty()?new String[0]:value[4].split(","))).put("missing",new JSONArray()).put("source","builtin").put("author","MeShell"));
         JSONArray custom=store.extensions();
-        for(int i=0;i<custom.length();i++) { JSONObject item=custom.getJSONObject(i); if(builtin(item.optString("id"))) continue; item.put("enabled",enabled(item.getString("id"))).put("builtin",false); out.put(item); }
+        for(int i=0;i<custom.length();i++) {
+            JSONObject item=custom.getJSONObject(i); String id=item.optString("id"); if(builtin(id)) continue;
+            JSONObject meta=store.meta(id);
+            item.put("enabled",enabled(id)).put("builtin",false).put("permissions",permissions(item)).put("missing",new JSONArray(missing(item,meta)))
+                .put("source",meta==null?"local":meta.optString("source","local"));
+            if(meta!=null) for(String key:new String[]{"version","author","github","category"}) if(meta.has(key)) item.put(key,meta.get(key));
+            if(meta!=null && meta.has("icon")) item.put("icon_name",meta.getString("icon"));
+            JSONObject local=meta==null?null:Marketplace.translation(meta);
+            if(local!=null) { if(!local.optString("title").isEmpty()) item.put("title",local.getString("title")); if(!local.optString("description").isEmpty()) item.put("description",local.getString("description")); }
+            out.put(item);
+        }
         return out;
+    }
+    /** Permissions the user has not approved yet; legacy modules keep the trust they were installed with. */
+    private List<String> missing(JSONObject definition,JSONObject meta) throws Exception {
+        if(meta==null) return new ArrayList<>();
+        List<String> out=definitions.permissions(definition); JSONArray granted=meta.optJSONArray("granted");
+        if(granted!=null) for(int i=0;i<granted.length();i++) out.remove(granted.getString(i));
+        return out;
+    }
+    JSONArray permissions(JSONObject definition) throws Exception { return new JSONArray(definitions.permissions(definition)); }
+    /** Records the user's consent to every permission the module currently needs. */
+    void grant(String id) throws Exception {
+        JSONObject definition=definition(id),meta=store.meta(id); if(definition==null || meta==null) return;
+        meta.put("granted",permissions(definition)); store.meta(id,meta);
+    }
+    JSONObject definition(String id) throws Exception {
+        JSONArray values=store.extensions();
+        for(int i=0;i<values.length();i++) if(id.equals(values.getJSONObject(i).optString("id"))) return values.getJSONObject(i);
+        return null;
     }
     private String description(String id) {
         switch(id) {
@@ -78,8 +111,17 @@ final class ModuleHub {
         return new JSONObject(definition.toString());
     }
     int importLimitBytes() { return definitions.maxCharacters()*4; }
-    void install(JSONObject definition) throws Exception {
-        JSONObject checked=prepare(definition); store.extension(checked); enabled(checked.getString("id"),true);
+    /** Agent and file installs. With consent the user approved the shown permissions; otherwise earlier approvals carry over. */
+    void install(JSONObject definition,boolean consent) throws Exception {
+        JSONObject checked=prepare(definition); String id=checked.getString("id"); JSONObject old=definition(id),previous=store.meta(id);
+        JSONArray granted=consent?permissions(checked):previous!=null?previous.optJSONArray("granted"):old!=null?permissions(old):new JSONArray();
+        store.extension(checked,new JSONObject().put("source","local").put("granted",granted==null?new JSONArray():granted)); enabled(id,true);
+    }
+    void install(JSONObject definition) throws Exception { install(definition,false); }
+    /** Catalogue installs: the consent dialog listed these permissions before the download. */
+    void installCatalog(JSONObject definition,JSONObject meta) throws Exception {
+        JSONObject checked=prepare(definition);
+        store.extension(checked,meta.put("source","catalog").put("granted",permissions(checked)).put("installed",System.currentTimeMillis())); enabled(checked.getString("id"),true);
     }
     JSONObject export(String id) throws Exception {
         JSONArray values=store.extensions();
@@ -122,6 +164,10 @@ final class ModuleHub {
                 JSONArray actions=list.getJSONObject(i).getJSONArray("actions");
                 for(int n=0;n<actions.length();n++) {
                     JSONObject definition=actions.getJSONObject(n); if(!action.equals(definition.getString("id"))) continue;
+                    List<String> missing=missing(list.getJSONObject(i),store.meta(id));
+                    if(!missing.isEmpty()) throw new IllegalStateException(Language.text(R.string.module_needs_consent)+String.join(", ",missing));
+                    JSONArray packages=list.getJSONObject(i).optJSONArray("packages");
+                    if(packages!=null && packages.length()>0) { List<String> names=new ArrayList<>(); for(int k=0;k<packages.length();k++) names.add(packages.getString(k)); new Packages(context).ensure(names,cancel); }
                     Map<String,String> env=new HashMap<>(); JSONObject names=definition.optJSONObject("env_secrets");
                     if(names!=null) { java.util.Iterator<String> keys=names.keys(); while(keys.hasNext()) { String key=keys.next(); Object value=vault.get(names.getString(key));
                         if(!(value instanceof String)) throw new IllegalArgumentException(Language.text(R.string.environment_variable_requires_a_string_secret)); env.put(key,(String)value); } }

@@ -74,6 +74,23 @@ final class Ui {
         TextView v=bold(c,label,11,color); v.setGravity(Gravity.CENTER_VERTICAL); v.setSingleLine(true);
         v.setBackground(shape(c,fill,999,0)); pad(v,10,5,10,5); return v;
     }
+    /** Rounded icon tile used for modules, permissions and catalogue entries. */
+    static IconView badge(Context c,int icon,int color,int glyph) {
+        IconView view=new IconView(c,icon,null,null); view.color(color); view.glyphSize(glyph); view.setMinimumWidth(0); view.setMinimumHeight(0);
+        view.setBackground(shape(c,color==LAVENDER?LAVENDER_SOFT:color==WARN?0x24efc48c:color==DANGER?DANGER_SOFT:MINT_SOFT,glyph<24?12:18,0)); return view;
+    }
+    /** Two or more segment buttons in one rounded track; callers mark the current one with {@link #selected}. */
+    static LinearLayout tabs(Context c,Button... items) {
+        LinearLayout tabs=row(c); tabs.setBackground(shape(c,PANEL,14,BORDER)); pad(tabs,4,4,4,4);
+        for(Button item:items) tabs.addView(item,new LinearLayout.LayoutParams(0,-1,1)); return tabs;
+    }
+    /** Search field with a leading magnifier inside one rounded box. */
+    static LinearLayout searchBox(Context c,EditText field) {
+        LinearLayout box=row(c); box.setBackground(shape(c,PANEL,16,BORDER)); pad(box,4,0,8,0);
+        IconView glass=new IconView(c,IconView.SEARCH,null,null); glass.color(FAINT); glass.glyphSize(18); box.addView(glass,size(c,40,46));
+        field.setSingleLine(true); field.setBackground(null); field.setHintTextColor(FAINT); pad(field,0,10,4,10); cursor(field);
+        box.addView(field,new LinearLayout.LayoutParams(0,-2,1)); return box;
+    }
     static LinearLayout card(Context c) {
         LinearLayout card=column(c); card.setBackground(shape(c,PANEL,22,BORDER)); pad(card,16,14,16,16); return card;
     }

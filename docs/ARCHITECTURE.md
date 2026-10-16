@@ -22,7 +22,8 @@ The Java directory groups retain one package. This keeps existing package-privat
 
 - Quota arithmetic: `services.quota.QuotaRules`, [rules](QUOTA_RULES.md).
 - Chat admission and identity: `ChatEngine`; retry and continuation: `RetryPolicy`; context construction: `ContextBudget` and `CompactContext`, [rules](CHAT_RULES.md).
-- Module definitions and dispatch: `ModuleHub`; storage: `ModuleStore`, [rules](MODULE_RULES.md).
+- Module definitions, permissions and dispatch: `ModuleHub` and `ModuleDefinition`; storage: `ModuleStore`, [rules](MODULE_RULES.md).
+- Catalogue client: `Marketplace`; ordering, search, versions and the issue protocol: `services.market.MarketRules`.
 - Device measurements: `TelemetryModule`, [rules](DEVICE_RULES.md).
 - File mutations, secret masking and updater: [environment rules](ENVIRONMENT_RULES.md).
 - Model catalogue and the reported Codex client version: `OpenAiClient`. Settings only triggers the update.

@@ -12,6 +12,8 @@ MeShell is a command-execution application, not an isolation boundary for untrus
 - Packages are downloaded over HTTPS from `packages.termux.dev` and each file is checked against the SHA-256 in the repository index. The index's GPG signature is not verified, so that check rests on HTTPS to the Termux host. Installed programs run as uid 2000 like every shell command.
 - The GitHub module keeps its token in the vault and passes it to `gh` only through the `GH_TOKEN` environment variable; it is not written to the gh configuration. Use a fine-grained token limited to the repositories and permissions you need.
 - HTTPS and Android permissions remain enforced. No safety claim is made for arbitrary imported shell modules.
+- Module permissions are declarations checked against known command patterns, not a sandbox: obfuscated commands can evade detection. Catalogue modules are reviewed by a maintainer before publishing; the download must match the SHA-256 in the catalogue index, which identifies the reviewed file but does not make it safe.
+- Ratings and submissions are public GitHub issues from the user's account. MeShell sends nothing to the catalogue without an explicit tap.
 
 Chat requests send the selected conversation context and attachments to OpenAI under your ChatGPT account. The Codex update check reads the public npm registry; package installation reads the Termux repository. Review provider terms, retention and costs before use.
 

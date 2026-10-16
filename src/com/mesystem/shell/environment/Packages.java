@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +16,6 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -54,6 +52,7 @@ final class Packages {
     private static final String PREFIX="data/data/com.termux/files/usr/",STAGE=ShellBroker.ROOT+"/.packages",MANIFEST=ShellBroker.TOOLS+"/toolchain.json";
     private static final Pattern NAME=Pattern.compile("[a-z0-9][a-z0-9+.-]*");
     private static final int CHUNK=1792*1024;
+    private static final String AGENT="MeShell-packages";
     private static final AtomicBoolean running=new AtomicBoolean();
     interface Progress { void update(String text); }
 
@@ -109,25 +108,12 @@ final class Packages {
         selected.put(name,item);
     }
 
-    private static HttpsURLConnection open(String url,OpenAiClient.Cancel cancel) throws IOException {
-        HttpsURLConnection connection=(HttpsURLConnection)new URL(url).openConnection();
-        connection.setConnectTimeout(20000); connection.setReadTimeout(60000);
-        connection.setRequestProperty("User-Agent","MeShell-packages"); cancel.attach(connection);
-        int code=connection.getResponseCode();
-        if(code!=200) { cancel.detach(connection); connection.disconnect(); throw new IOException("HTTP "+code+": "+url); }
-        return connection;
-    }
     private static String index(OpenAiClient.Cancel cancel) throws IOException {
-        HttpsURLConnection connection=open(MIRROR+"dists/stable/main/binary-aarch64/Packages",cancel);
-        try(InputStream in=connection.getInputStream()) {
-            ByteArrayOutputStream out=new ByteArrayOutputStream(); byte[] buffer=new byte[65536]; int n;
-            while((n=in.read(buffer))>0) { cancel.check(); out.write(buffer,0,n); if(out.size()>32*1024*1024) throw new IOException("Package index is too large"); }
-            return new String(out.toByteArray(),StandardCharsets.UTF_8);
-        } finally { cancel.detach(connection); connection.disconnect(); }
+        return new String(Http.get(MIRROR+"dists/stable/main/binary-aarch64/Packages",AGENT,32*1024*1024,cancel),StandardCharsets.UTF_8);
     }
     private static void download(Item item,File target,OpenAiClient.Cancel cancel) throws Exception {
         if(!item.file.matches("pool/[A-Za-z0-9+._/~:%-]+\\.deb") || item.file.contains("..")) throw new IOException("Invalid package path: "+item.file);
-        HttpsURLConnection connection=open(MIRROR+item.file,cancel);
+        HttpsURLConnection connection=Http.open(MIRROR+item.file,AGENT,cancel);
         MessageDigest digest=MessageDigest.getInstance("SHA-256");
         try(InputStream in=connection.getInputStream(); OutputStream out=new FileOutputStream(target)) {
             byte[] buffer=new byte[65536]; int n; long total=0;
@@ -214,6 +200,12 @@ final class Packages {
             try { shell.run("rm -rf "+ShellBroker.quote(STAGE),10000,new OpenAiClient.Cancel()); } catch(Exception ignored) { }
             running.set(false);
         }
+    }
+    /** Installs whichever of the named packages are missing; a no-op when all are recorded. */
+    void ensure(Collection<String> names,OpenAiClient.Cancel cancel) throws Exception {
+        JSONObject packages=installed(cancel); List<String> missing=new ArrayList<>();
+        for(String name:names) if(version(packages,name).isEmpty()) missing.add(name);
+        if(!missing.isEmpty()) install(missing,false,text -> { },cancel);
     }
     /** Installs Codex and the basic tools once, on an unmetered network, after the terminal connects. */
     static void automatic(Context context) {

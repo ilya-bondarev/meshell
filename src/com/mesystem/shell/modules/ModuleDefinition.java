@@ -4,9 +4,13 @@ import android.content.res.Resources;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -23,6 +27,41 @@ final class ModuleDefinition {
     void validate(JSONObject value) throws Exception {
         if(value.toString().length()>maxCharacters()) throw new IllegalArgumentException(Language.text(R.string.module_definition_too_large));
         check(value,schema,"module");
+        List<String> missing=required(value); missing.removeAll(declared(value));
+        if(!missing.isEmpty()) throw new IllegalArgumentException(Language.text(R.string.module_permissions_missing)+String.join(", ",missing));
+    }
+    /** Contract order of the permission vocabulary. */
+    List<String> vocabulary() throws Exception {
+        JSONArray values=schema.getJSONObject("properties").getJSONObject(schema.getString("x-permissions")).getJSONObject("items").getJSONArray("enum");
+        List<String> out=new ArrayList<>(); for(int i=0;i<values.length();i++) out.add(values.getString(i)); return out;
+    }
+    private List<String> declared(JSONObject value) throws Exception {
+        List<String> out=new ArrayList<>(); JSONArray values=value.optJSONArray(schema.getString("x-permissions"));
+        if(values!=null) for(int i=0;i<values.length();i++) out.add(values.getString(i)); return out;
+    }
+    /** Permissions implied by fields and command patterns of the contract, in vocabulary order. */
+    List<String> required(JSONObject value) throws Exception {
+        Set<String> found=new HashSet<>(); needs(value,schema,found);
+        List<String> out=vocabulary(); out.retainAll(found); return out;
+    }
+    /** Declared plus implied permissions: what the user approves before a module runs. */
+    List<String> permissions(JSONObject value) throws Exception {
+        Set<String> all=new LinkedHashSet<>(declared(value)); all.addAll(required(value));
+        List<String> out=vocabulary(); out.retainAll(all); return out;
+    }
+    private static void needs(Object value,JSONObject rule,Set<String> out) throws Exception {
+        String implied=rule.optString("x-impliesPermission");
+        if(!implied.isEmpty() && ((value instanceof JSONObject && ((JSONObject)value).length()>0) || (value instanceof JSONArray && ((JSONArray)value).length()>0))) out.add(implied);
+        JSONObject patterns=rule.optJSONObject("x-permissionPatterns");
+        if(patterns!=null && value instanceof String) {
+            Iterator<String> keys=patterns.keys();
+            while(keys.hasNext()) { String key=keys.next(); if(Pattern.compile(patterns.getString(key)).matcher((String)value).find()) out.add(key); }
+        }
+        if(value instanceof JSONObject) {
+            JSONObject source=(JSONObject)value,properties=rule.optJSONObject("properties"); Iterator<String> keys=source.keys();
+            while(keys.hasNext()) { String key=keys.next(); if(properties!=null && properties.has(key)) needs(source.get(key),properties.getJSONObject(key),out); }
+        }
+        if(value instanceof JSONArray && rule.has("items")) { JSONArray array=(JSONArray)value; for(int i=0;i<array.length();i++) needs(array.get(i),rule.getJSONObject("items"),out); }
     }
     private static void reject(String path) { throw new IllegalArgumentException(Language.text(R.string.invalid_module_field)+path); }
     private static void check(Object value,JSONObject rule,String path) throws Exception {
@@ -48,6 +87,7 @@ final class ModuleDefinition {
                 for(int i=0;i<array.length();i++) {
                     check(array.get(i),rule.getJSONObject("items"),path+"["+i+"]");
                     if(rule.has("x-uniqueBy") && !identities.add(array.getJSONObject(i).getString(rule.getString("x-uniqueBy")))) reject(path+"["+i+"]");
+                    if(rule.optBoolean("uniqueItems") && !identities.add(String.valueOf(array.get(i)))) reject(path+"["+i+"]");
                 }
                 break;
             case "integer":
@@ -58,13 +98,16 @@ final class ModuleDefinition {
             case "string": if(!(value instanceof String)) reject(path); break;
         }
         if(value instanceof String) {
-            String text=(String)value;
-            if(text.codePointCount(0,text.length())<rule.optInt("minLength",0) || (rule.has("pattern") && !java.util.regex.Pattern.compile(rule.getString("pattern")).matcher(text).find())) reject(path);
+            String text=(String)value; JSONArray allowed=rule.optJSONArray("enum"); boolean listed=allowed==null;
+            if(allowed!=null) for(int i=0;i<allowed.length();i++) if(text.equals(allowed.getString(i))) listed=true;
+            if(!listed || text.codePointCount(0,text.length())<rule.optInt("minLength",0) || (rule.has("pattern") && !Pattern.compile(rule.getString("pattern")).matcher(text).find())) reject(path);
         }
     }
     JSONObject portable(JSONObject definition) throws Exception {
-        // Schema projection drops stored UI metadata and any ignored legacy fields.
-        JSONObject value=(JSONObject)project(definition,schema); validate(value); return value;
+        // Schema projection drops stored UI metadata and any ignored legacy fields; export declares every permission it needs.
+        JSONObject value=(JSONObject)project(definition,schema); List<String> permissions=permissions(value);
+        if(!permissions.isEmpty()) value.put(schema.getString("x-permissions"),new JSONArray(permissions));
+        validate(value); return value;
     }
     private static Object project(Object value,JSONObject rule) throws Exception {
         if(value instanceof JSONObject) {

@@ -29,7 +29,7 @@ final class AgentTools {
         "read_file reads UTF-8 line ranges; write_file atomically replaces a text file; replace_text replaces exactly one matching fragment; list_dir lists a directory. "+
         "device_ui returns the Android UI tree and coordinates; device_screenshot returns a screenshot. Android input/am/cmd commands are available through run_shell. usb_devices reports attached USB devices and permissions; usb_transfer performs control or bulk transfers. "+
         "vault_list returns secret aliases and types, not values. env_secrets maps CLI environment variable names to vault aliases. Secret generation and file import keep secret values in the vault. "+
-        "module_list lists modules, actions and parameters; module_run executes an enabled action. module_install and module_manage configure modules. "+
+        "module_list lists modules, actions and parameters; module_run executes an enabled action. module_install and module_manage configure modules. module_catalog searches the community catalogue; the user installs from Modules → Catalogue. "+
         "Chats have separate histories and cancellation, but share the phone, files and accounts. Tool calls are ordered; a sequence of calls is not a transaction. "+
         "packages_install installs or updates Termux packages (Codex CLI, git, curl, ssh and zip by default; build_tools adds clang, Java and aapt2) into /data/local/tmp/meshell/toolusr, which is on PATH for run_shell and the terminal. "+
         "build_self builds a signed APK; install_self starts a separate updater and restarts the app. environment_info reports the update result. Build and installation are unavailable while other tasks are active. "+
@@ -80,8 +80,12 @@ final class AgentTools {
         tool(tools,"module_run","Run an enabled module action. Call module_list first for actions and parameters.",new JSONObject()
             .put("module",field("string","Module ID")) .put("action",field("string","Action"))
             .put("arguments",new JSONObject().put("type","object").put("additionalProperties",true)),"module","action");
-        tool(tools,"module_install","Add/update a JSON module: id,title,description,actions[{id,label,command,cwd,timeout_ms,env_secrets}]. Secrets are vault aliases only.",new JSONObject()
+        tool(tools,"module_install","Add/update a JSON module: id,title,description,permissions,packages,actions[{id,label,command,cwd,timeout_ms,env_secrets}]. "+
+            "permissions lists every one the commands use from network, storage (/sdcard), screen (screencap/screenrecord), system (settings/pm/am/cmd/svc/input), secrets (env_secrets), packages; "+
+            "undeclared ones are rejected. packages names Termux packages installed before the first run. Secrets are vault aliases only. The user approves permissions before the module runs.",new JSONObject()
             .put("definition",new JSONObject().put("type","object").put("additionalProperties",true)),"definition");
+        tool(tools,"module_catalog","Search community modules with author, rating, downloads, size and permissions. Suggest matches; installation needs the user's consent in Modules → Catalogue.",new JSONObject()
+            .put("query",field("string","Search words; empty lists popular modules")));
         tool(tools,"module_manage","Enable, disable, remove a custom module or clear its local data only on explicit user instruction.",new JSONObject()
             .put("module",field("string","Module ID")) .put("operation",field("string","enable, disable, remove, clear")),"module","operation");
         return tools;
@@ -193,6 +197,7 @@ final class AgentTools {
             case "module_list": value=new JSONObject().put("modules",((MeShellApp)context.getApplicationContext()).modules().list()); break;
             case "module_run": value=((MeShellApp)context.getApplicationContext()).modules().execute(args.getString("module"),args.getString("action"),args.optJSONObject("arguments")==null?new JSONObject():args.getJSONObject("arguments"),cancel); break;
             case "module_install": ((MeShellApp)context.getApplicationContext()).modules().install(args.getJSONObject("definition")); value=new JSONObject().put("installed",args.getJSONObject("definition").getString("id")); break;
+            case "module_catalog": value=((MeShellApp)context.getApplicationContext()).modules().market.search(args.optString("query"),cancel); break;
             case "module_manage": {
                 ModuleHub hub=((MeShellApp)context.getApplicationContext()).modules(); String id=args.getString("module"),op=args.getString("operation");
                 if(op.equals("enable")) hub.enabled(id,true); else if(op.equals("disable")) hub.enabled(id,false); else if(op.equals("remove")) hub.remove(id);

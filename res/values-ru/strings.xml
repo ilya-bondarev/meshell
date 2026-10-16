@@ -354,7 +354,6 @@
     <string name="clear" formatted="false">"Очистить"</string>
     <string name="import_json_file" formatted="false">"Импортировать JSON-файл"</string>
     <string name="paste_json" formatted="false">"Вставить описание JSON"</string>
-    <string name="ask_gpt_to_create_a_module" formatted="false">"Попросить GPT создать модуль"</string>
     <string name="create_a_meshell_module_for_me_ask_about_its_purpose_first_t" formatted="false">"Создай для меня новый модуль MeShell. Сначала уточни его назначение, затем используй module_install."</string>
     <string name="module_definition" formatted="false">"Описание модуля"</string>
     <string name="add" formatted="false">"Добавить"</string>
@@ -540,4 +539,146 @@
     <string name="github_pull_requests" formatted="false">"Pull requests"</string>
     <string name="github_runs" formatted="false">"Запуски Actions"</string>
     <string name="github_disconnect" formatted="false">"Отключить"</string>
+    <string name="my_modules" formatted="false">"Мои"</string>
+    <string name="catalog" formatted="false">"Каталог"</string>
+    <string name="catalog_subtitle" formatted="false">"Модули от сообщества"</string>
+    <string name="refresh_catalog" formatted="false">"Обновить каталог"</string>
+    <string name="rules_title" formatted="false">"Делитесь модулями"</string>
+    <string name="your_module" formatted="false">"Ваш модуль"</string>
+    <string name="update_available" formatted="false">"Есть обновление"</string>
+    <string name="needs_approval" formatted="false">"Нужно ваше разрешение"</string>
+    <string name="catalog_invite" formatted="false">"оценки, отзывы, установка в один тап"</string>
+    <string name="catalog_page" formatted="false">"Страница в каталоге"</string>
+    <string name="publish_to_catalog" formatted="false">"Опубликовать в каталоге"</string>
+    <string name="add_from_catalog" formatted="false">"Готовые модули с оценками"</string>
+    <string name="create_with_gpt" formatted="false">"Создать с GPT"</string>
+    <string name="create_with_gpt_note" formatted="false">"Опишите задачу — GPT соберёт модуль"</string>
+    <string name="import_json_note" formatted="false">"module.json с телефона"</string>
+    <string name="paste_json_note" formatted="false">"Текст определения из буфера"</string>
+    <string name="publish_rules_note" formatted="false">"Правила и как поделиться модулем"</string>
+    <string name="show_json" formatted="false">"Показать JSON"</string>
+    <string name="search_modules" formatted="false">"Поиск модулей"</string>
+    <string name="sort_popular" formatted="false">"Популярные"</string>
+    <string name="sort_top" formatted="false">"Лучшие"</string>
+    <string name="sort_new" formatted="false">"Новые"</string>
+    <string name="category_all" formatted="false">"Все"</string>
+    <string name="category_system" formatted="false">"Система"</string>
+    <string name="category_network" formatted="false">"Сеть"</string>
+    <string name="category_files" formatted="false">"Файлы"</string>
+    <string name="category_developer" formatted="false">"Разработка"</string>
+    <string name="category_productivity" formatted="false">"На каждый день"</string>
+    <string name="category_media" formatted="false">"Медиа"</string>
+    <string name="category_fun" formatted="false">"Развлечения"</string>
+    <string name="catalog_updated" formatted="false">"обновлено "</string>
+    <string name="catalog_offline" formatted="false">"Нет связи с каталогом — показана сохранённая копия"</string>
+    <string name="catalog_unavailable" formatted="false">"Каталог недоступен"</string>
+    <string name="catalog_not_loaded" formatted="false">"Каталог ещё не загрузился"</string>
+    <string name="nothing_found" formatted="false">"Ничего не нашлось. Попросите сообщество сделать такой модуль."</string>
+    <string name="request_module" formatted="false">"Попросить модуль"</string>
+    <string name="make_your_module" formatted="false">"Сделайте свой модуль"</string>
+    <string name="make_your_module_note" formatted="false">"Опубликуйте его: другие установят, оценят и увидят ваше имя на GitHub."</string>
+    <string name="how_to_publish" formatted="false">"Как опубликовать"</string>
+    <string name="get" formatted="false">"Скачать"</string>
+    <string name="update" formatted="false">"Обновить"</string>
+    <string name="not_in_catalog" formatted="false">"Этого модуля нет в каталоге"</string>
+    <string name="author_profile" formatted="false">"Профиль автора на GitHub"</string>
+    <string name="no_ratings" formatted="false">"Нет оценок"</string>
+    <string name="downloads" formatted="false">"скачиваний"</string>
+    <string name="size" formatted="false">"размер"</string>
+    <string name="size_with_packages" formatted="false">"модуль + пакеты"</string>
+    <string name="needs_meshell" formatted="false">"Нужна MeShell "</string>
+    <string name="update_to" formatted="false">"Обновить до "</string>
+    <string name="install_size" formatted="false">"Установить · "</string>
+    <string name="permissions" formatted="false">"Права"</string>
+    <string name="what_it_does" formatted="false">"Что умеет"</string>
+    <string name="show_commands" formatted="false">"Показать команды"</string>
+    <string name="about_module" formatted="false">"О модуле"</string>
+    <string name="version" formatted="false">"Версия"</string>
+    <string name="entry_updated" formatted="false">"Обновлён"</string>
+    <string name="license" formatted="false">"Лицензия"</string>
+    <string name="minimum_meshell" formatted="false">"Минимальная MeShell"</string>
+    <string name="requirements" formatted="false">"Требования"</string>
+    <string name="source_code" formatted="false">"Исходный код"</string>
+    <string name="report_problem" formatted="false">"Пожаловаться"</string>
+    <string name="ratings_and_reviews" formatted="false">"Оценки и отзывы"</string>
+    <string name="rate_module" formatted="false">"Оценить"</string>
+    <string name="install_to_rate" formatted="false">"Установите модуль, чтобы оценить"</string>
+    <string name="all_reviews" formatted="false">"Все отзывы на GitHub"</string>
+    <string name="module_asks_for" formatted="false">"Модулю нужно"</string>
+    <string name="module_trust_note" formatted="false">"Модули — это shell-команды с правами MeShell, а не песочница. Модули каталога проверяют перед публикацией; если сомневаетесь, посмотрите команды."</string>
+    <string name="install_module" formatted="false">"Установить"</string>
+    <string name="update_module" formatted="false">"Обновить"</string>
+    <string name="module_installed" formatted="false">"Установлен: "</string>
+    <string name="tap_a_star" formatted="false">"Нажмите на звезду"</string>
+    <string name="rating_1" formatted="false">"Плохо"</string>
+    <string name="rating_2" formatted="false">"Слабо"</string>
+    <string name="rating_3" formatted="false">"Нормально"</string>
+    <string name="rating_4" formatted="false">"Хорошо"</string>
+    <string name="rating_5" formatted="false">"Отлично"</string>
+    <string name="review_hint" formatted="false">"Что понравилось или что улучшить (необязательно)"</string>
+    <string name="rating_note_connected" formatted="false">"Оценка публикуется на GitHub от подключённого аккаунта. Одна оценка на аккаунт, считается последняя."</string>
+    <string name="rating_note_browser" formatted="false">"Откроется GitHub с заполненной оценкой — подтвердите её там. Одна оценка на аккаунт, считается последняя."</string>
+    <string name="send" formatted="false">"Отправить"</string>
+    <string name="sending" formatted="false">"Отправляю…"</string>
+    <string name="rating_sent" formatted="false">"Спасибо! Оценка появится в каталоге через несколько минут."</string>
+    <string name="confirm_on_github" formatted="false">"Подтвердите оценку на GitHub"</string>
+    <string name="publish_module" formatted="false">"Опубликовать"</string>
+    <string name="publish_note" formatted="false">"Модуль увидят все пользователи MeShell. Модератор проверит команды и права; после одобрения модуль появится в каталоге под вашим именем на GitHub."</string>
+    <string name="category" formatted="false">"Категория"</string>
+    <string name="catalog_text" formatted="false">"Описание для каталога"</string>
+    <string name="catalog_text_hint" formatted="false">"Что делает модуль и как его настроить"</string>
+    <string name="publish_license" formatted="false">"Я автор модуля и публикую его под лицензией MIT-0"</string>
+    <string name="publish_license_required" formatted="false">"Подтвердите авторство и лицензию MIT-0"</string>
+    <string name="catalog_rules" formatted="false">"Правила каталога"</string>
+    <string name="send_for_review" formatted="false">"Отправить на проверку"</string>
+    <string name="submission_sent" formatted="false">"Заявка отправлена"</string>
+    <string name="submission_sent_note" formatted="false">"Модератор проверит модуль. Следите за проверкой и отвечайте на вопросы в заявке на GitHub."</string>
+    <string name="open_on_github" formatted="false">"Открыть на GitHub"</string>
+    <string name="submission_copied" formatted="false">"Заявка скопирована. Если форма на GitHub пустая, вставьте текст и отправьте."</string>
+    <string name="rules_lead" formatted="false">"Опубликованный модуль любой пользователь MeShell установит в один тап. Автором показан ваш аккаунт GitHub, скачивания и оценки видны всем."</string>
+    <string name="publish_step_1" formatted="false">"Соберите модуль: попросите GPT, вставьте или импортируйте JSON. Проверьте каждое действие на своём телефоне."</string>
+    <string name="publish_step_2" formatted="false">"Долгое нажатие на модуль в «Мои» → «Опубликовать в каталоге». Выберите категорию, версию и описание."</string>
+    <string name="publish_step_3" formatted="false">"MeShell создаст заявку на GitHub от вашего аккаунта. Модератор проверит команды и права."</string>
+    <string name="publish_step_4" formatted="false">"После одобрения модуль появится в каталоге под вашим именем. Обновления публикуются так же, с новой версией."</string>
+    <string name="rule_1" formatted="false">"Один модуль — одна понятная задача; название и описание честно говорят, что он делает."</string>
+    <string name="rule_2" formatted="false">"Заявите все права. Команды проверяются автоматически, незаявленное право — отказ."</string>
+    <string name="rule_3" formatted="false">"Никаких паролей, токенов и личных данных в командах. Секреты — только через сейф (env_secrets)."</string>
+    <string name="rule_4" formatted="false">"Нельзя скачивать и запускать код на лету (curl | sh) и класть бинарники. Зависимости — только пакеты Termux в поле packages."</string>
+    <string name="rule_5" formatted="false">"Действия, которые удаляют данные или меняют настройки, прямо говорят об этом в названии. Ничего скрытого."</string>
+    <string name="rule_6" formatted="false">"Публикуйте только свою работу и под лицензией MIT-0."</string>
+    <string name="rule_7" formatted="false">"Обновлять модуль может только автор; каждое обновление повышает версию и снова проходит проверку."</string>
+    <string name="rule_8" formatted="false">"Спам, вредоносные и вводящие в заблуждение модули удаляются, автора могут заблокировать."</string>
+    <string name="ratings_and_downloads" formatted="false">"Оценки и скачивания"</string>
+    <string name="ratings_rule" formatted="false">"Оценки от 1 до 5 ставят аккаунты GitHub: одна на аккаунт и модуль, считается последняя, свой модуль оценить нельзя."</string>
+    <string name="downloads_rule" formatted="false">"Скачивания считает статистика релизов GitHub: каждая установка и обновление."</string>
+    <string name="publish_my_module" formatted="false">"Опубликовать мой модуль"</string>
+    <string name="rules_on_github" formatted="false">"Полные правила на GitHub"</string>
+    <string name="paste_submission" formatted="false">"Вставьте сюда текст заявки из буфера обмена."</string>
+    <string name="module_request" formatted="false">"Запрос модуля"</string>
+    <string name="module_request_body" formatted="false">"Опишите, что должен делать модуль, на каком телефоне и какой результат вы ждёте."</string>
+    <string name="module_report_body" formatted="false">"Что не так с модулем? Укажите действие, вывод и версию Android."</string>
+    <string name="permission_network" formatted="false">"Интернет"</string>
+    <string name="permission_network_note" formatted="false">"Отправляет запросы на серверы в интернете"</string>
+    <string name="permission_storage" formatted="false">"Общие файлы"</string>
+    <string name="permission_storage_note" formatted="false">"Читает или меняет файлы в памяти телефона (/sdcard)"</string>
+    <string name="permission_screen" formatted="false">"Снимки экрана"</string>
+    <string name="permission_screen_note" formatted="false">"Делает скриншоты или записывает экран"</string>
+    <string name="permission_system" formatted="false">"Системные настройки и приложения"</string>
+    <string name="permission_system_note" formatted="false">"Меняет настройки, запускает и останавливает приложения, имитирует нажатия"</string>
+    <string name="permission_secrets" formatted="false">"Секреты из сейфа"</string>
+    <string name="permission_secrets_note" formatted="false">"Получает ваши секреты из сейфа MeShell как переменные"</string>
+    <string name="permission_packages" formatted="false">"Пакеты Termux"</string>
+    <string name="permission_packages_note" formatted="false">"Скачивает пакеты из репозитория Termux"</string>
+    <string name="permission_packages_list" formatted="false">"Скачает при первом запуске: "</string>
+    <string name="permission_overlay" formatted="false">"Поверх других приложений"</string>
+    <string name="permission_overlay_note" formatted="false">"Android спросит отдельно, когда вы включите"</string>
+    <string name="no_special_permissions" formatted="false">"Особых прав не нужно"</string>
+    <string name="no_special_permissions_note" formatted="false">"Нет ни интернета, ни общих файлов, ни экрана, ни системных изменений, ни секретов"</string>
+    <string name="module_permissions_missing" formatted="false">"Заявите права, которые используют команды: "</string>
+    <string name="module_needs_consent" formatted="false">"Сначала разрешите права модуля в «Модулях»: "</string>
+    <string name="module_checksum_mismatch" formatted="false">"Скачанный модуль не совпадает с контрольной суммой каталога"</string>
+    <string name="response_too_large" formatted="false">"Слишком большой ответ: "</string>
+    <string name="version_format" formatted="false">"Формат версии: 1.2.3"</string>
+    <plurals name="module_count"><item quantity="one">модуль</item><item quantity="few">модуля</item><item quantity="many">модулей</item><item quantity="other">модуля</item></plurals>
+    <plurals name="rating_count"><item quantity="one">оценка</item><item quantity="few">оценки</item><item quantity="many">оценок</item><item quantity="other">оценки</item></plurals>
 </resources>

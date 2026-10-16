@@ -9,7 +9,7 @@ final class ModuleTests {
         ModuleDefinition definitions=new ModuleDefinition(resources);
         JSONObject action=new JSONObject().put("id","status").put("command","getprop ro.build.version.release")
             .put("cwd","/private/workspace").put("env_secrets",new JSONObject().put("API_TOKEN","personal-alias"));
-        JSONObject value=new JSONObject().put("id","system-status").put("title","System").put("actions",new JSONArray().put(action));
+        JSONObject value=new JSONObject().put("id","system-status").put("title","System").put("permissions",new JSONArray().put("secrets")).put("actions",new JSONArray().put(action));
         definitions.validate(value);
         value.put("enabled",true).put("hidden_password","never-export");
         JSONObject portable=definitions.portable(value);
@@ -27,8 +27,20 @@ final class ModuleTests {
             rejected=false; try { GitHubModule.command("repo",new JSONObject().put("repo",repo)); } catch(IllegalArgumentException error) { rejected=true; }
             if(!rejected) throw new AssertionError("GitHub repository accepted: "+repo);
         }
+        JSONObject fetch=new JSONObject().put("id","weather").put("title","Weather").put("actions",new JSONArray().put(new JSONObject().put("id","now").put("command","curl -fsS https://wttr.in/?format=3")));
+        rejected=false; try { definitions.validate(fetch); } catch(IllegalArgumentException error) { rejected=error.getMessage().endsWith("network"); }
+        if(!rejected) throw new AssertionError("undeclared network permission must be named and rejected");
+        if(!definitions.portable(fetch).getJSONArray("permissions").toString().equals("[\"network\"]")) throw new AssertionError("portable export declares implied permissions");
+        fetch.put("permissions",new JSONArray().put("network")); definitions.validate(fetch);
+        JSONObject all=new JSONObject().put("id","all").put("title","All").put("packages",new JSONArray().put("jq")).put("actions",new JSONArray().put(new JSONObject().put("id","a")
+            .put("command","settings put global x 1; screencap -p /sdcard/a.png").put("env_secrets",new JSONObject().put("TOKEN","alias"))));
+        if(!definitions.required(all).toString().equals("[storage, screen, system, secrets, packages]")) throw new AssertionError("permission inference order: "+definitions.required(all));
+        for(JSONArray invalid:new JSONArray[]{new JSONArray().put("camera"),new JSONArray().put("network").put("network")}) {
+            rejected=false; try { definitions.validate(new JSONObject(fetch.toString()).put("permissions",invalid)); } catch(IllegalArgumentException error) { rejected=true; }
+            if(!rejected) throw new AssertionError("permission vocabulary and uniqueness: "+invalid);
+        }
         if(services.quota.QuotaRules.weeklyRemaining(18000,90,604800,35)!=65 || !Double.isNaN(services.quota.QuotaRules.weeklyRemaining(18000,10,0,0)))
             throw new AssertionError("weekly allowance window");
-        System.out.println("MODULE_TESTS_OK 5"); return 5;
+        System.out.println("MODULE_TESTS_OK 9"); return 9;
     }
 }

@@ -24,6 +24,8 @@ final class Language {
         }
     }
     static String chats(int count) { return resources.getQuantityString(R.plurals.chat_count,count); }
+    /** "3 modules": the number followed by its plural noun. */
+    static String quantity(int plural,int count) { return count+" "+resources.getQuantityString(plural,count); }
     static void select(Context context,String code) {
         if(!code.equals("en") && !code.equals("ru")) throw new IllegalArgumentException(code);
         context.getSharedPreferences("appearance",Context.MODE_PRIVATE).edit().putString("language",code).apply();

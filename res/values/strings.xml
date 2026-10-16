@@ -354,7 +354,6 @@
     <string name="clear" formatted="false">"Clear"</string>
     <string name="import_json_file" formatted="false">"Import JSON file"</string>
     <string name="paste_json" formatted="false">"Paste JSON"</string>
-    <string name="ask_gpt_to_create_a_module" formatted="false">"Ask GPT to create a module"</string>
     <string name="create_a_meshell_module_for_me_ask_about_its_purpose_first_t" formatted="false">"Create a MeShell module for me. Ask about its purpose first, then use module_install."</string>
     <string name="module_definition" formatted="false">"Module definition"</string>
     <string name="add" formatted="false">"Add"</string>
@@ -540,4 +539,146 @@
     <string name="github_pull_requests" formatted="false">"Pull requests"</string>
     <string name="github_runs" formatted="false">"Actions runs"</string>
     <string name="github_disconnect" formatted="false">"Disconnect"</string>
+    <string name="my_modules" formatted="false">"My modules"</string>
+    <string name="catalog" formatted="false">"Catalogue"</string>
+    <string name="catalog_subtitle" formatted="false">"Community modules"</string>
+    <string name="refresh_catalog" formatted="false">"Refresh catalogue"</string>
+    <string name="rules_title" formatted="false">"Share your modules"</string>
+    <string name="your_module" formatted="false">"Your module"</string>
+    <string name="update_available" formatted="false">"Update available"</string>
+    <string name="needs_approval" formatted="false">"Needs your approval"</string>
+    <string name="catalog_invite" formatted="false">"ratings, reviews, one-tap install"</string>
+    <string name="catalog_page" formatted="false">"Catalogue page"</string>
+    <string name="publish_to_catalog" formatted="false">"Publish to catalogue"</string>
+    <string name="add_from_catalog" formatted="false">"Ready-made modules with ratings"</string>
+    <string name="create_with_gpt" formatted="false">"Create with GPT"</string>
+    <string name="create_with_gpt_note" formatted="false">"Describe the task, GPT builds the module"</string>
+    <string name="import_json_note" formatted="false">"module.json from this phone"</string>
+    <string name="paste_json_note" formatted="false">"Definition text from the clipboard"</string>
+    <string name="publish_rules_note" formatted="false">"Rules and how to share your module"</string>
+    <string name="show_json" formatted="false">"Show JSON"</string>
+    <string name="search_modules" formatted="false">"Search modules"</string>
+    <string name="sort_popular" formatted="false">"Popular"</string>
+    <string name="sort_top" formatted="false">"Top rated"</string>
+    <string name="sort_new" formatted="false">"New"</string>
+    <string name="category_all" formatted="false">"All"</string>
+    <string name="category_system" formatted="false">"System"</string>
+    <string name="category_network" formatted="false">"Network"</string>
+    <string name="category_files" formatted="false">"Files"</string>
+    <string name="category_developer" formatted="false">"Development"</string>
+    <string name="category_productivity" formatted="false">"Everyday"</string>
+    <string name="category_media" formatted="false">"Media"</string>
+    <string name="category_fun" formatted="false">"Fun"</string>
+    <string name="catalog_updated" formatted="false">"updated "</string>
+    <string name="catalog_offline" formatted="false">"No connection to the catalogue — showing the saved copy"</string>
+    <string name="catalog_unavailable" formatted="false">"Catalogue unavailable"</string>
+    <string name="catalog_not_loaded" formatted="false">"The catalogue has not loaded yet"</string>
+    <string name="nothing_found" formatted="false">"Nothing found. Ask the community to build it."</string>
+    <string name="request_module" formatted="false">"Request a module"</string>
+    <string name="make_your_module" formatted="false">"Make your own module"</string>
+    <string name="make_your_module_note" formatted="false">"Publish it: others install it, rate it and see your GitHub name."</string>
+    <string name="how_to_publish" formatted="false">"How to publish"</string>
+    <string name="get" formatted="false">"Get"</string>
+    <string name="update" formatted="false">"Update"</string>
+    <string name="not_in_catalog" formatted="false">"This module is not in the catalogue"</string>
+    <string name="author_profile" formatted="false">"Author\'s GitHub profile"</string>
+    <string name="no_ratings" formatted="false">"No ratings"</string>
+    <string name="downloads" formatted="false">"downloads"</string>
+    <string name="size" formatted="false">"size"</string>
+    <string name="size_with_packages" formatted="false">"module + packages"</string>
+    <string name="needs_meshell" formatted="false">"Requires MeShell "</string>
+    <string name="update_to" formatted="false">"Update to "</string>
+    <string name="install_size" formatted="false">"Install · "</string>
+    <string name="permissions" formatted="false">"Permissions"</string>
+    <string name="what_it_does" formatted="false">"What it does"</string>
+    <string name="show_commands" formatted="false">"Show commands"</string>
+    <string name="about_module" formatted="false">"About"</string>
+    <string name="version" formatted="false">"Version"</string>
+    <string name="entry_updated" formatted="false">"Updated"</string>
+    <string name="license" formatted="false">"License"</string>
+    <string name="minimum_meshell" formatted="false">"Minimum MeShell"</string>
+    <string name="requirements" formatted="false">"Requirements"</string>
+    <string name="source_code" formatted="false">"Source code"</string>
+    <string name="report_problem" formatted="false">"Report a problem"</string>
+    <string name="ratings_and_reviews" formatted="false">"Ratings and reviews"</string>
+    <string name="rate_module" formatted="false">"Rate"</string>
+    <string name="install_to_rate" formatted="false">"Install the module to rate it"</string>
+    <string name="all_reviews" formatted="false">"All reviews on GitHub"</string>
+    <string name="module_asks_for" formatted="false">"The module asks for"</string>
+    <string name="module_trust_note" formatted="false">"Modules are shell commands with MeShell\'s rights, not a sandbox. Catalogue modules are reviewed before publishing; check the commands if in doubt."</string>
+    <string name="install_module" formatted="false">"Install"</string>
+    <string name="update_module" formatted="false">"Update"</string>
+    <string name="module_installed" formatted="false">"Installed: "</string>
+    <string name="tap_a_star" formatted="false">"Tap a star"</string>
+    <string name="rating_1" formatted="false">"Bad"</string>
+    <string name="rating_2" formatted="false">"Weak"</string>
+    <string name="rating_3" formatted="false">"OK"</string>
+    <string name="rating_4" formatted="false">"Good"</string>
+    <string name="rating_5" formatted="false">"Excellent"</string>
+    <string name="review_hint" formatted="false">"What works well or what to improve (optional)"</string>
+    <string name="rating_note_connected" formatted="false">"Published on GitHub from your connected account. One rating per account; your latest counts."</string>
+    <string name="rating_note_browser" formatted="false">"GitHub opens with the rating filled in; confirm it there. One rating per account; your latest counts."</string>
+    <string name="send" formatted="false">"Send"</string>
+    <string name="sending" formatted="false">"Sending…"</string>
+    <string name="rating_sent" formatted="false">"Thanks! The rating appears in the catalogue within a few minutes."</string>
+    <string name="confirm_on_github" formatted="false">"Confirm the rating on GitHub"</string>
+    <string name="publish_module" formatted="false">"Publish"</string>
+    <string name="publish_note" formatted="false">"Everyone using MeShell will see the module. A maintainer reviews its commands and permissions; once approved it appears under your GitHub name."</string>
+    <string name="category" formatted="false">"Category"</string>
+    <string name="catalog_text" formatted="false">"Catalogue description"</string>
+    <string name="catalog_text_hint" formatted="false">"What the module does and how to set it up"</string>
+    <string name="publish_license" formatted="false">"I wrote this module and publish it under MIT-0"</string>
+    <string name="publish_license_required" formatted="false">"Confirm authorship and the MIT-0 license"</string>
+    <string name="catalog_rules" formatted="false">"Catalogue rules"</string>
+    <string name="send_for_review" formatted="false">"Send for review"</string>
+    <string name="submission_sent" formatted="false">"Submitted for review"</string>
+    <string name="submission_sent_note" formatted="false">"A maintainer will check the module. Follow the review and answer questions in the GitHub issue."</string>
+    <string name="open_on_github" formatted="false">"Open on GitHub"</string>
+    <string name="submission_copied" formatted="false">"Submission copied. Paste it on GitHub if the form is empty, then submit."</string>
+    <string name="rules_lead" formatted="false">"Anyone with MeShell can install a module you publish in one tap. Your GitHub account is shown as the author; downloads and ratings are public."</string>
+    <string name="publish_step_1" formatted="false">"Build the module: ask GPT, or paste or import JSON. Check every action on your phone."</string>
+    <string name="publish_step_2" formatted="false">"Long-press it in My modules → Publish to catalogue. Pick a category, version and description."</string>
+    <string name="publish_step_3" formatted="false">"MeShell opens a submission on GitHub from your account. A maintainer reviews the commands and permissions."</string>
+    <string name="publish_step_4" formatted="false">"After approval the module is in the catalogue under your name. Publish updates the same way with a higher version."</string>
+    <string name="rule_1" formatted="false">"One clear task per module; the title and description say exactly what it does."</string>
+    <string name="rule_2" formatted="false">"Declare every permission. Commands are checked automatically; an undeclared one is rejected."</string>
+    <string name="rule_3" formatted="false">"No passwords, tokens or personal data in commands. Secrets go only through the vault (env_secrets)."</string>
+    <string name="rule_4" formatted="false">"No downloading and running code at run time (curl | sh) and no binaries. Dependencies are Termux packages in the packages field."</string>
+    <string name="rule_5" formatted="false">"Actions that delete data or change settings say so in their label. Nothing hidden."</string>
+    <string name="rule_6" formatted="false">"Only your own work, published under MIT-0."</string>
+    <string name="rule_7" formatted="false">"Only the author can update a module; every update raises the version and passes review again."</string>
+    <string name="rule_8" formatted="false">"Spam, malware and misleading modules are removed, and their author can be banned."</string>
+    <string name="ratings_and_downloads" formatted="false">"Ratings and downloads"</string>
+    <string name="ratings_rule" formatted="false">"Ratings from 1 to 5 come from GitHub accounts: one per account and module, the latest counts, authors cannot rate their own modules."</string>
+    <string name="downloads_rule" formatted="false">"GitHub release statistics count every install and update."</string>
+    <string name="publish_my_module" formatted="false">"Publish my module"</string>
+    <string name="rules_on_github" formatted="false">"Full rules on GitHub"</string>
+    <string name="paste_submission" formatted="false">"Paste the submission text from the clipboard here."</string>
+    <string name="module_request" formatted="false">"Module request"</string>
+    <string name="module_request_body" formatted="false">"Describe what the module should do, on which phone, and what output you expect."</string>
+    <string name="module_report_body" formatted="false">"What is wrong with this module? Include the action, the output and your Android version."</string>
+    <string name="permission_network" formatted="false">"Internet"</string>
+    <string name="permission_network_note" formatted="false">"Sends requests to servers on the internet"</string>
+    <string name="permission_storage" formatted="false">"Shared files"</string>
+    <string name="permission_storage_note" formatted="false">"Reads or changes files in phone storage (/sdcard)"</string>
+    <string name="permission_screen" formatted="false">"Screen capture"</string>
+    <string name="permission_screen_note" formatted="false">"Takes screenshots or records the screen"</string>
+    <string name="permission_system" formatted="false">"System settings and apps"</string>
+    <string name="permission_system_note" formatted="false">"Changes settings, starts or stops apps, simulates input"</string>
+    <string name="permission_secrets" formatted="false">"Vault secrets"</string>
+    <string name="permission_secrets_note" formatted="false">"Receives your secrets from the MeShell vault as variables"</string>
+    <string name="permission_packages" formatted="false">"Termux packages"</string>
+    <string name="permission_packages_note" formatted="false">"Downloads packages from the Termux repository"</string>
+    <string name="permission_packages_list" formatted="false">"Downloads on first run: "</string>
+    <string name="permission_overlay" formatted="false">"Display over other apps"</string>
+    <string name="permission_overlay_note" formatted="false">"Android asks separately when you turn it on"</string>
+    <string name="no_special_permissions" formatted="false">"No special permissions"</string>
+    <string name="no_special_permissions_note" formatted="false">"No internet, shared files, screen, system changes or secrets declared or detected"</string>
+    <string name="module_permissions_missing" formatted="false">"Declare the permissions the commands use: "</string>
+    <string name="module_needs_consent" formatted="false">"Approve the module\'s permissions in Modules first: "</string>
+    <string name="module_checksum_mismatch" formatted="false">"The downloaded module does not match the catalogue checksum"</string>
+    <string name="response_too_large" formatted="false">"Response is too large: "</string>
+    <string name="version_format" formatted="false">"Version format: 1.2.3"</string>
+    <plurals name="module_count"><item quantity="one">module</item><item quantity="other">modules</item></plurals>
+    <plurals name="rating_count"><item quantity="one">rating</item><item quantity="other">ratings</item></plurals>
 </resources>

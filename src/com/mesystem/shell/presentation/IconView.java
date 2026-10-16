@@ -13,7 +13,8 @@ final class IconView extends View {
     static final int HOME=1,CHAT=2,TERMINAL=3,GRID=4,SETTINGS=5,PLUS=6,CLIP=7,MIC=8,SEND=9,STOP=10,
         COPY=11,HISTORY=12,BACK=13,REFRESH=14,PLAY=15,POWER=16,UP=17,DOWN=18,LEFT=19,RIGHT=20,
         SAVE=21,TRASH=22,WIFI=23,CPU=24,SENSOR=25,CHART=26,BLUETOOTH=27,NOTES=28,PHONE=29,TV=30,MORE=31,
-        FOX=32,SEARCH=33,KEY=34,CHEVRON=35,BRANCH=36;
+        FOX=32,SEARCH=33,KEY=34,CHEVRON=35,BRANCH=36,STAR=37,STAR_FULL=38,DOWNLOAD=39,SHIELD=40,FOLDER=41,STORE=42,
+        PERSON=43,PACKAGE=44,IMAGE=45,BATTERY=46,SUN=47,SCREEN=48;
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path path=new Path();
     private int icon,color=Ui.INK;
@@ -75,6 +76,20 @@ final class IconView extends View {
             case KEY: c.drawCircle(7.5f,14.5f,4.5f,paint); line(c,11,11,20,2); line(c,16,6,19,9); line(c,14,8,16,10); break;
             case CHEVRON: line(c,9,5,16,12,9,19); break;
             case BRANCH: c.drawCircle(6,5,2.5f,paint); c.drawCircle(6,19,2.5f,paint); c.drawCircle(18,6,2.5f,paint); line(c,6,7.5f,6,16.5f); path.moveTo(18,8.5f); path.cubicTo(18,14,6,11,6,16.5f); c.drawPath(path,paint); break;
+            case STAR: case STAR_FULL:
+                if(icon==STAR_FULL) paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                for(int i=0;i<10;i++) { double a=Math.PI*(i*36-90)/180; float r=i%2==0?9.5f:4.1f,x=12+(float)Math.cos(a)*r,y=12.8f+(float)Math.sin(a)*r; if(i==0) path.moveTo(x,y); else path.lineTo(x,y); }
+                path.close(); c.drawPath(path,paint); break;
+            case DOWNLOAD: line(c,12,3,12,15); line(c,7,10,12,15,17,10); line(c,4,17,4,21,20,21,20,17); break;
+            case SHIELD: path.moveTo(12,2.5f); path.lineTo(20,5.5f); path.lineTo(20,11); path.cubicTo(20,16,16.5f,19.5f,12,21.5f); path.cubicTo(7.5f,19.5f,4,16,4,11); path.lineTo(4,5.5f); path.close(); c.drawPath(path,paint); line(c,8.5f,12,11,14.5f,15.5f,9.5f); break;
+            case FOLDER: line(c,3,5,9,5,11,7.5f,21,7.5f,21,19,3,19,3,5); break;
+            case STORE: rect(c,4,8,20,21,2.5f); c.drawArc(new RectF(8,3,16,12),180,180,false,paint); line(c,8,7.5f,8,10); line(c,16,7.5f,16,10); break;
+            case PERSON: c.drawCircle(12,8,4,paint); c.drawArc(new RectF(4,14,20,30),180,180,false,paint); break;
+            case PACKAGE: line(c,12,2.5f,20.5f,7,20.5f,17,12,21.5f,3.5f,17,3.5f,7,12,2.5f); line(c,3.5f,7,12,11.5f,20.5f,7); line(c,12,11.5f,12,21.5f); break;
+            case IMAGE: rect(c,3,4,21,20,3); c.drawCircle(8.5f,9.5f,1.8f,paint); line(c,3,17,9,12,13,16,16,13,21,17); break;
+            case BATTERY: rect(c,2.5f,7,19,17,2.5f); line(c,21.5f,10.5f,21.5f,13.5f); line(c,6,10,6,14); line(c,9.5f,10,9.5f,14); line(c,13,10,13,14); break;
+            case SUN: c.drawCircle(12,12,4,paint); for(int i=0;i<8;i++) { double a=i*Math.PI/4; line(c,12+(float)Math.cos(a)*7,12+(float)Math.sin(a)*7,12+(float)Math.cos(a)*9.5f,12+(float)Math.sin(a)*9.5f); } break;
+            case SCREEN: rect(c,6,2,18,22,3); rect(c,9,6,15,12,1); line(c,9,16,15,16); break;
             default: c.drawCircle(12,12,8,paint);
         }
         path.reset(); c.restore();

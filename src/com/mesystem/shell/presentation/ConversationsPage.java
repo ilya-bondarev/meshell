@@ -31,19 +31,15 @@ final class ConversationsPage extends LinearLayout {
         header.addView(Ui.bold(c,Language.text(R.string.chats),24,Ui.INK),new LayoutParams(0,-2,1));
         header.addView(new IconView(c,IconView.SETTINGS,Language.text(R.string.settings),v -> settings.run()),Ui.size(c,44,44));
         header.addView(new IconView(c,IconView.PLUS,Language.text(R.string.create_chat_or_agent_profile),v -> add()),Ui.size(c,44,44)); addView(header);
-        LinearLayout tabs=Ui.row(c); tabs.setBackground(Ui.shape(c,Ui.PANEL,14,Ui.BORDER)); Ui.pad(tabs,4,4,4,4);
         chats=Ui.button(c,Language.text(R.string.chats),true,v -> tab(false)); agents=Ui.button(c,Language.text(R.string.agents),false,v -> tab(true));
-        tabs.addView(chats,new LayoutParams(0,-1,1)); tabs.addView(agents,new LayoutParams(0,-1,1));
+        LinearLayout tabs=Ui.tabs(c,chats,agents);
         LayoutParams tl=Ui.size(c,-1,46); tl.setMargins(Ui.dp(c,16),0,Ui.dp(c,16),Ui.dp(c,10)); addView(tabs,tl);
         taskRow=Ui.row(c); Ui.pressable(taskRow,Ui.MINT_SOFT,16,0); taskRow.setOnClickListener(v -> AgentDialogs.tasks(c,chat,opened));
         task=Ui.text(c,"",12,Ui.MINT); task.setLineSpacing(Ui.dp(c,3),1); Ui.pad(task,14,10,8,10); taskRow.addView(task,new LayoutParams(0,-2,1));
         stop=new IconView(c,IconView.STOP,Language.text(R.string.stop_running_task),v -> AgentDialogs.tasks(c,chat,opened)); stop.color(Ui.DANGER); taskRow.addView(stop,Ui.size(c,48,48));
         LayoutParams trp=Ui.size(c,-1,-2); trp.setMargins(Ui.dp(c,16),0,Ui.dp(c,16),Ui.dp(c,10)); addView(taskRow,trp);
-        LinearLayout searchBox=Ui.row(c); searchBox.setBackground(Ui.shape(c,Ui.PANEL,16,Ui.BORDER)); Ui.pad(searchBox,4,0,8,0);
-        IconView glass=new IconView(c,IconView.SEARCH,null,null); glass.color(Ui.FAINT); glass.glyphSize(18); searchBox.addView(glass,Ui.size(c,40,46));
         search=AgentDialogs.entry(c,"",Language.text(R.string.search_titles_and_messages),InputType.TYPE_CLASS_TEXT);
-        search.setSingleLine(true); search.setBackground(null); search.setHintTextColor(Ui.FAINT); Ui.pad(search,0,10,4,10); Ui.cursor(search);
-        searchBox.addView(search,new LayoutParams(0,-2,1));
+        LinearLayout searchBox=Ui.searchBox(c,search);
         LayoutParams sp=Ui.size(c,-1,48); sp.setMargins(Ui.dp(c,16),0,Ui.dp(c,16),0); addView(searchBox,sp);
         search.addTextChangedListener(new TextWatcher() {
             public void beforeTextChanged(CharSequence s,int start,int count,int after) { }

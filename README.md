@@ -57,9 +57,17 @@ If ChatGPT rejects device sign-in, enable device code authorization for Codex in
 | Mascot | A floating fox over other apps showing the weekly ChatGPT allowance; drag to move, tap to refresh. Asks for the display-over-apps permission only when you turn it on. |
 | GitHub | Your repositories, issues, pull requests and Actions runs through the official `gh` CLI, which installs on first use. Uses a fine-grained token kept in the vault. |
 
-Custom modules are JSON definitions of shell actions. Create them in **Modules → +**, import a JSON file, or ask the agent to write one. The [`meshell-tools`](https://github.com/ilya-bondarev/meshell-tools) catalogue collects shareable definitions.
+Custom modules are JSON definitions of shell actions. Get them from **Modules → Catalogue**, create them in **Modules → +**, import a JSON file, or ask the agent to write one.
 
-The agent's tools cover the shell, files, the device UI and screenshots, USB devices, the encrypted vault, modules, and rebuilding/installing the app from its own sources on the phone.
+### Catalogue
+
+**Modules → Catalogue** lists community modules from [`meshell-tools`](https://github.com/ilya-bondarev/meshell-tools) with their author's GitHub account, permissions, size, downloads and a 1–5 rating with reviews. Search, filter by category and sort by popularity, rating or date. Installing shows the permissions first; the download is GitHub's counted release asset and must match the SHA-256 in the catalogue index. Updates appear on the module tile and install only when you confirm them.
+
+Every module declares the permissions its commands need: `network`, `storage` (shared files), `screen` (screenshots and recording), `system` (settings, apps, input), `secrets` (vault values) and `packages` (Termux packages installed before the first run). MeShell detects these from the definition and rejects undeclared ones; a module runs only after you approve them. Declarations make modules readable, they do not sandbox them.
+
+Rate an installed module from its catalogue page. With the GitHub module connected the rating is filed from your account; otherwise GitHub opens with it filled in. One rating per account and module counts.
+
+The agent's tools cover the shell, files, the device UI and screenshots, USB devices, the encrypted vault, modules and the catalogue, and rebuilding/installing the app from its own sources on the phone.
 
 ## Build
 
@@ -101,9 +109,11 @@ The agent's `build_self` tool expects the sources in `/data/local/tmp/meshell/ho
 
 ## Share modules
 
-Long-press a custom module → **Export JSON** → inspect the definition → **Save file** or **Copy text**. Import from **Modules → + → Import JSON file** or paste JSON; confirm the full definition before installation or replacement. Installation does not run its commands.
+Long-press your module → **Publish to catalogue**, choose a category, version and description, and confirm that you wrote it under MIT-0. MeShell files a submission on GitHub from your account (or opens a prefilled one); a maintainer reviews the commands and permissions, and once approved the module appears in the catalogue under your GitHub name. **Modules → + → Publish to catalogue** shows the rules.
 
-Exports remove local working directories and personal vault alias names. Recipients create the referenced vault aliases locally; never put credential values in JSON commands.
+Long-press a custom module → **Export JSON** → inspect the definition → **Save file** or **Copy text**. Import from **Modules → + → Import JSON file** or paste JSON; the permissions are shown and approved before installation or replacement. Installation does not run its commands.
+
+Exports remove local working directories and personal vault alias names and declare the detected permissions. Recipients create the referenced vault aliases locally; never put credential values in JSON commands.
 
 ## Repository
 

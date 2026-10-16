@@ -1,5 +1,13 @@
 # Changes
 
+## 0.10.0
+
+- **Module catalogue** in **Modules → Catalogue**: search, categories, popular/top/new sorting, author, permissions, size, downloads, ratings and reviews; one-tap install after a permission prompt, update badges, rating from the app.
+- **Permissions** in the module contract (`network`, `storage`, `screen`, `system`, `secrets`, `packages`), detected from commands and fields; undeclared ones are rejected and a module runs only after the user approves them. Modules installed before 0.10.0 keep running.
+- `packages` field: Termux packages a module needs, installed before its first run.
+- **Publish to catalogue** from the module menu: the submission is filed on GitHub from the connected account or a prefilled browser form; rules are in **Modules → + → Publish to catalogue**.
+- Agent tool `module_catalog` searches the catalogue.
+
 ## 0.9.7
 
 - **Mascot** module: a floating fox over other apps with the weekly ChatGPT allowance. The display-over-apps permission is requested only when the mascot is turned on.

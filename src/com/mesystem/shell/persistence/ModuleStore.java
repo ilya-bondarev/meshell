@@ -9,12 +9,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 final class ModuleStore extends SQLiteOpenHelper {
-    ModuleStore(Context c) { super(c,"modules.db",null,1); setWriteAheadLoggingEnabled(true); }
+    ModuleStore(Context c) { super(c,"modules.db",null,2); setWriteAheadLoggingEnabled(true); }
     @Override public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE notes(id INTEGER PRIMARY KEY AUTOINCREMENT,title TEXT NOT NULL,body TEXT NOT NULL,updated INTEGER NOT NULL)");
-        db.execSQL("CREATE TABLE extensions(id TEXT PRIMARY KEY,definition TEXT NOT NULL)");
+        db.execSQL("CREATE TABLE extensions(id TEXT PRIMARY KEY,definition TEXT NOT NULL,meta TEXT)");
     }
-    @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int version) { }
+    /** Version 2 adds install metadata; NULL marks a module installed before permission consent existed. */
+    @Override public void onUpgrade(SQLiteDatabase db,int oldVersion,int version) { if(oldVersion<2) db.execSQL("ALTER TABLE extensions ADD COLUMN meta TEXT"); }
     JSONArray notes() throws Exception {
         JSONArray out=new JSONArray(); try(Cursor c=getReadableDatabase().rawQuery("SELECT id,title,body,updated FROM notes ORDER BY updated DESC",null)) {
             while(c.moveToNext()) out.put(new JSONObject().put("id",c.getLong(0)).put("title",c.getString(1)).put("body",c.getString(2)).put("updated",c.getLong(3)));
@@ -31,9 +32,18 @@ final class ModuleStore extends SQLiteOpenHelper {
             while(c.moveToNext()) out.put(new JSONObject(c.getString(0)));
         } return out;
     }
-    void extension(JSONObject value) throws Exception {
-        ContentValues v=new ContentValues(); v.put("id",value.getString("id")); v.put("definition",value.toString());
+    void extension(JSONObject value,JSONObject meta) throws Exception {
+        ContentValues v=new ContentValues(); v.put("id",value.getString("id")); v.put("definition",value.toString()); v.put("meta",meta==null?null:meta.toString());
         getWritableDatabase().insertWithOnConflict("extensions",null,v,SQLiteDatabase.CONFLICT_REPLACE);
+    }
+    /** Install source, catalogue version and granted permissions; null for legacy modules. */
+    JSONObject meta(String id) throws Exception {
+        try(Cursor c=getReadableDatabase().rawQuery("SELECT meta FROM extensions WHERE id=?",new String[]{id})) {
+            return c.moveToNext() && !c.isNull(0)?new JSONObject(c.getString(0)):null;
+        }
+    }
+    void meta(String id,JSONObject meta) {
+        ContentValues v=new ContentValues(); v.put("meta",meta.toString()); getWritableDatabase().update("extensions",v,"id=?",new String[]{id});
     }
     void removeExtension(String id) { getWritableDatabase().delete("extensions","id=?",new String[]{id}); }
     void clear(String id) { if(id.equals("notes")) getWritableDatabase().delete("notes",null,null); }
