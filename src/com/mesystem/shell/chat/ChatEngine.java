@@ -214,6 +214,16 @@ final class ChatEngine {
         int maximum=modelInfo(model).optInt("context_window",262144);
         if(ready) setConfiguration(threadId(),config.options(Math.max(4096,Math.min(maximum,tokens)),agent),profileId);
     }
+    double weeklyRemaining() {
+        JSONObject rate=limits.optJSONObject("rate_limit");
+        JSONObject primary=rate==null?null:rate.optJSONObject("primary_window");
+        JSONObject secondary=rate==null?null:rate.optJSONObject("secondary_window");
+        return services.quota.QuotaRules.weeklyRemaining(
+            primary==null?0:primary.optLong("limit_window_seconds",0),
+            primary==null?Double.NaN:primary.optDouble("used_percent",Double.NaN),
+            secondary==null?0:secondary.optLong("limit_window_seconds",0),
+            secondary==null?Double.NaN:secondary.optDouble("used_percent",Double.NaN));
+    }
     void refreshLimits() {
         if(!authenticated || !quotaPending.compareAndSet(false,true)) return;
         limitsLoading=true; changed();

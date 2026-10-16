@@ -10,6 +10,7 @@ MeShell is a command-execution application, not an isolation boundary for untrus
 - Agent calls share phone files and accounts across chats. A sequence of calls is not a transaction. App and external shell operations do not all share the file-tool lock.
 - Self-updates require the existing signing identity. The updater attempts rollback, but cannot guarantee recovery after abrupt termination or power loss.
 - Packages are downloaded over HTTPS from `packages.termux.dev` and each file is checked against the SHA-256 in the repository index. The index's GPG signature is not verified, so that check rests on HTTPS to the Termux host. Installed programs run as uid 2000 like every shell command.
+- The GitHub module keeps its token in the vault and passes it to `gh` only through the `GH_TOKEN` environment variable; it is not written to the gh configuration. Use a fine-grained token limited to the repositories and permissions you need.
 - HTTPS and Android permissions remain enforced. No safety claim is made for arbitrary imported shell modules.
 
 Chat requests send the selected conversation context and attachments to OpenAI under your ChatGPT account. The Codex update check reads the public npm registry; package installation reads the Termux repository. Review provider terms, retention and costs before use.

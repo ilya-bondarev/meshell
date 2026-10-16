@@ -1,5 +1,10 @@
 # Changes
 
+## 0.9.7
+
+- **Mascot** module: a floating fox over other apps with the weekly ChatGPT allowance. The display-over-apps permission is requested only when the mascot is turned on.
+- **GitHub** module: repositories, issues, pull requests and Actions runs through the official `gh` CLI from Termux, installed on first use. The token is stored in the vault and passed to `gh` only as `GH_TOKEN`.
+
 ## 0.9.6
 
 - **Packages**: the Codex CLI, git, curl, OpenSSH and zip install automatically from the official Termux repository the first time the terminal connects on Wi-Fi. **Settings → Packages** installs or updates them and can add clang, Java 21 and aapt2. Downloads are checked against the index SHA-256 sums; no Termux app is needed.

@@ -520,4 +520,24 @@
     <string name="include_build_tools" formatted="false">"Also build tools: clang, Java 21, aapt2 (about 200 MB more)"</string>
     <string name="packages_source" formatted="false">"Codex CLI, git, curl, ssh, zip and their libraries come from the official Termux repository (packages.termux.dev) and are checked against its SHA-256 sums."</string>
     <string name="install" formatted="false">"Install"</string>
+    <string name="mascot_title" formatted="false">"Mascot"</string>
+    <string name="mascot_description" formatted="false">"A floating fox with your weekly ChatGPT allowance. Drag to move, tap to refresh."</string>
+    <string name="mascot_needs_overlay" formatted="false">"Allow MeShell to display over other apps."</string>
+    <string name="mascot_show" formatted="false">"Show mascot"</string>
+    <string name="mascot_hide" formatted="false">"Hide mascot"</string>
+    <string name="allow" formatted="false">"Allow"</string>
+    <string name="github_description" formatted="false">"Repositories, issues, pull requests and Actions"</string>
+    <string name="github_token_format" formatted="false">"This does not look like a GitHub token"</string>
+    <string name="github_repository_format" formatted="false">"Enter the repository as owner/name"</string>
+    <string name="github_not_connected" formatted="false">"GitHub is not connected. Add a token in the GitHub module."</string>
+    <string name="github_connect_hint" formatted="false">"Create a fine-grained token for the repositories you need and add it here. It stays in the MeShell vault. The GitHub CLI installs on first use."</string>
+    <string name="github_create_token" formatted="false">"Create token on GitHub"</string>
+    <string name="github_add_token" formatted="false">"Add token"</string>
+    <string name="github_signed_in_as" formatted="false">"Signed in as "</string>
+    <string name="github_repositories" formatted="false">"My repositories"</string>
+    <string name="github_repository" formatted="false">"Repository"</string>
+    <string name="github_issues" formatted="false">"Issues"</string>
+    <string name="github_pull_requests" formatted="false">"Pull requests"</string>
+    <string name="github_runs" formatted="false">"Actions runs"</string>
+    <string name="github_disconnect" formatted="false">"Disconnect"</string>
 </resources>

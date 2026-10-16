@@ -520,4 +520,24 @@
     <string name="include_build_tools" formatted="false">"Ещё инструменты сборки: clang, Java 21, aapt2 (около 200 МБ)"</string>
     <string name="packages_source" formatted="false">"Codex CLI, git, curl, ssh, zip и их библиотеки берутся из официального репозитория Termux (packages.termux.dev) и сверяются с его SHA-256."</string>
     <string name="install" formatted="false">"Установить"</string>
+    <string name="mascot_title" formatted="false">"Маскот"</string>
+    <string name="mascot_description" formatted="false">"Плавающий лис с недельным остатком ChatGPT. Перетащите, чтобы переместить, нажмите, чтобы обновить."</string>
+    <string name="mascot_needs_overlay" formatted="false">"Разрешите MeShell показываться поверх других приложений."</string>
+    <string name="mascot_show" formatted="false">"Показать маскота"</string>
+    <string name="mascot_hide" formatted="false">"Скрыть маскота"</string>
+    <string name="allow" formatted="false">"Разрешить"</string>
+    <string name="github_description" formatted="false">"Репозитории, issues, pull requests и Actions"</string>
+    <string name="github_token_format" formatted="false">"Это не похоже на токен GitHub"</string>
+    <string name="github_repository_format" formatted="false">"Укажите репозиторий как owner/name"</string>
+    <string name="github_not_connected" formatted="false">"GitHub не подключён. Добавьте токен в модуле GitHub."</string>
+    <string name="github_connect_hint" formatted="false">"Создайте fine-grained токен для нужных репозиториев и добавьте его здесь. Он хранится в сейфе MeShell. GitHub CLI установится при первом запуске."</string>
+    <string name="github_create_token" formatted="false">"Создать токен на GitHub"</string>
+    <string name="github_add_token" formatted="false">"Добавить токен"</string>
+    <string name="github_signed_in_as" formatted="false">"Вход выполнен: "</string>
+    <string name="github_repositories" formatted="false">"Мои репозитории"</string>
+    <string name="github_repository" formatted="false">"Репозиторий"</string>
+    <string name="github_issues" formatted="false">"Issues"</string>
+    <string name="github_pull_requests" formatted="false">"Pull requests"</string>
+    <string name="github_runs" formatted="false">"Запуски Actions"</string>
+    <string name="github_disconnect" formatted="false">"Отключить"</string>
 </resources>

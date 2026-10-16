@@ -13,18 +13,22 @@ final class ModuleHub {
     final SecretVault vault;
     final ShellBroker shell;
     final TelemetryModule telemetry;
+    final GitHubModule github;
+    private final Context context;
     private final java.util.concurrent.ExecutorService jobsExecutor=java.util.concurrent.Executors.newFixedThreadPool(2);
     private final java.util.LinkedHashMap<String,JSONObject> jobs=new java.util.LinkedHashMap<>();
     final SharedPreferences prefs;
     private String[][] builtins() { return new String[][]{
         {"notes",Language.text(R.string.notes),Language.text(R.string.local_text_notes),"28"},
-        {"device",Language.text(R.string.device),Language.text(R.string.cpu_memory_and_sensors),"24"}
+        {"device",Language.text(R.string.device),Language.text(R.string.cpu_memory_and_sensors),"24"},
+        {"mascot",Language.text(R.string.mascot_title),Language.text(R.string.mascot_description),"32"},
+        {"github","GitHub",Language.text(R.string.github_description),"36"}
     }; }
     ModuleHub(Context context) {
-        definitions=new ModuleDefinition(context.getResources());
+        this.context=context; definitions=new ModuleDefinition(context.getResources());
         store=new ModuleStore(context); vault=((MeShellApp)context).vault(); shell=new ShellBroker(context);
         prefs=context.getSharedPreferences("modules",Context.MODE_PRIVATE);
-        telemetry=new TelemetryModule(context,shell);
+        telemetry=new TelemetryModule(context,shell); github=new GitHubModule(context,shell,vault);
     }
     JSONArray extensions() throws Exception { return store.extensions(); }
     JSONArray notes() throws Exception { return store.notes(); }
@@ -56,13 +60,15 @@ final class ModuleHub {
         for(String[] value:builtins()) out.put(new JSONObject().put("id",value[0]).put("title",value[1]).put("description",value[2])
             .put("icon",Integer.parseInt(value[3])).put("enabled",enabled(value[0])).put("builtin",true).put("actions",description(value[0])));
         JSONArray custom=store.extensions();
-        for(int i=0;i<custom.length();i++) { JSONObject item=custom.getJSONObject(i); item.put("enabled",enabled(item.getString("id"))).put("builtin",false); out.put(item); }
+        for(int i=0;i<custom.length();i++) { JSONObject item=custom.getJSONObject(i); if(builtin(item.optString("id"))) continue; item.put("enabled",enabled(item.getString("id"))).put("builtin",false); out.put(item); }
         return out;
     }
     private String description(String id) {
         switch(id) {
             case "notes": return "list {}; save {id?:number,title,text}; delete {id}";
             case "device": return "sample {} (CPU needs two samples); sensors {}";
+            case "mascot": return "status {}; start {}; stop {}";
+            case "github": return "status {}; repos {}; repo {repo:owner/name}; issues {repo}; prs {repo}; runs {repo}";
             default: return "";
         }
     }
@@ -98,6 +104,17 @@ final class ModuleHub {
                 if(action.equals("sample")) return telemetry.sample(cancel);
                 if(action.equals("sensors")) return new JSONObject().put("sensors",telemetry.sensors());
                 break;
+            case "mascot":
+                boolean allowed=android.provider.Settings.canDrawOverlays(context);
+                android.content.Intent mascot=new android.content.Intent(context,MascotService.class);
+                if(action.equals("status")) return new JSONObject().put("overlay_allowed",allowed).put("running",MascotService.running);
+                if(action.equals("stop")) { context.stopService(mascot); return new JSONObject().put("stopped",true); }
+                if(action.equals("start")) {
+                    if(!allowed) throw new IllegalStateException(Language.text(R.string.mascot_needs_overlay));
+                    context.startForegroundService(mascot); return new JSONObject().put("started",true);
+                }
+                break;
+            case "github": return new JSONObject(vault.redact(github.run(action,args,cancel).toString()));
         }
         if(!builtin(id)) {
             JSONArray list=store.extensions();

@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
+import android.text.InputType;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -53,7 +57,10 @@ final class ModulesPage extends LinearLayout {
         add=new IconView(activity,IconView.PLUS,Language.text(R.string.add_module),v -> addModule()); heading.addView(add,Ui.size(activity,44,44)); addView(heading);
         stage=new FrameLayout(activity); addView(stage,new LayoutParams(-1,0,1)); open("");
     }
-    void active(boolean value) { active=value; if(monitor!=null) monitor.active(value); if(!value && leave!=null) leave.run(); }
+    void active(boolean value) {
+        boolean resumed=value && !active; active=value; if(monitor!=null) monitor.active(value); if(!value && leave!=null) leave.run();
+        if(resumed && current.equals("mascot")) open(current);
+    }
     boolean back() { if(current.isEmpty()) return false; open(""); return true; }
     void open(String id) {
         if(leave!=null) { leave.run(); leave=null; }
@@ -68,6 +75,8 @@ final class ModulesPage extends LinearLayout {
         switch(id) {
             case "notes": notes(); break;
             case "device": monitor=new MonitorPage(activity,hub); stage.addView(monitor); monitor.active(active); break;
+            case "mascot": mascot(); break;
+            case "github": github(); break;
             default: extension(id); break;
         }
     }
@@ -196,6 +205,58 @@ final class ModulesPage extends LinearLayout {
         actions.addView(new IconView(activity,IconView.TRASH,Language.text(R.string.delete_note),v -> new AlertDialog.Builder(activity).setTitle(Language.text(R.string.delete_note_2))
             .setNegativeButton(Language.text(R.string.cancel),null).setPositiveButton(Language.text(R.string.delete_2),(d,w) -> { main.removeCallbacks(save); changed[0]=false; if(id[0]>0) hub.deleteNote(id[0]); open("notes"); }).show()),Ui.size(activity,44,44));
         body.addView(actions); leave=() -> { main.removeCallbacks(save); save.run(); };
+    }
+    private void mascot() {
+        LinearLayout body=body(); status(body,Language.text(R.string.mascot_description));
+        if(!Settings.canDrawOverlays(activity)) {
+            status(body,Language.text(R.string.mascot_needs_overlay));
+            action(body,Language.text(R.string.allow),true,() -> activity.startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,Uri.parse("package:"+activity.getPackageName()))));
+            return;
+        }
+        boolean running=MascotService.running;
+        action(body,Language.text(running?R.string.mascot_hide:R.string.mascot_show),true,() -> {
+            try { hub.execute("mascot",running?"stop":"start",new JSONObject(),new OpenAiClient.Cancel()); } catch(Exception e) { toast(e.getMessage()); }
+            main.postDelayed(() -> { if(current.equals("mascot")) open("mascot"); },400);
+        });
+    }
+    private void github() {
+        LinearLayout body=body();
+        if(!hub.github.connected()) {
+            status(body,Language.text(R.string.github_connect_hint));
+            action(body,Language.text(R.string.github_create_token),false,() -> activity.startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(GitHubModule.TOKEN_PAGE))));
+            action(body,Language.text(R.string.github_add_token),true,this::githubToken);
+            return;
+        }
+        TextView status=status(body,"");
+        job(status,c -> hub.execute("github","status",new JSONObject(),c),result -> {
+            String output=githubOutput(result);
+            try { status.setText(result.optInt("exit_code")==0?Language.text(R.string.github_signed_in_as)+new JSONObject(output).optString("login"):output); } catch(Exception e) { status.setText(output); }
+        });
+        action(body,Language.text(R.string.github_repositories),false,() -> githubRun(status,"repos",null,Language.text(R.string.github_repositories)));
+        EditText repo=edit("owner/repo",false); repo.setText(hub.prefs.getString("github-repo","")); body.addView(repo,Ui.size(activity,-1,52)); Ui.gap(body,10);
+        int[] labels={R.string.github_repository,R.string.github_issues,R.string.github_pull_requests,R.string.github_runs};
+        String[] names={"repo","issues","prs","runs"};
+        for(int i=0;i<names.length;i++) { String name=names[i],label=Language.text(labels[i]);
+            action(body,label,false,() -> { String value=repo.getText().toString().trim(); hub.prefs.edit().putString("github-repo",value).apply(); githubRun(status,name,value,label); }); }
+        action(body,Language.text(R.string.github_disconnect),false,() -> new AlertDialog.Builder(activity).setTitle(Language.text(R.string.github_disconnect)+"?")
+            .setNegativeButton(Language.text(R.string.cancel),null).setPositiveButton(Language.text(R.string.github_disconnect),(d,w) -> { try { hub.github.disconnect(); } catch(Exception e) { toast(e.getMessage()); } open("github"); }).show());
+    }
+    private void githubRun(TextView status,String action,String repo,String label) {
+        job(status,c -> hub.execute("github",action,repo==null?new JSONObject():new JSONObject().put("repo",repo),c),result -> details(label,githubOutput(result)));
+    }
+    /** gh prints the raw API body before its own one-line error; keep only that line on failure. */
+    private static String githubOutput(JSONObject result) {
+        String output=result.optString("output",result.toString()).trim();
+        if(result.optInt("exit_code")==0) return output;
+        int at=output.lastIndexOf("gh: "); return at>=0?output.substring(at+4).trim():output;
+    }
+    private void githubToken() {
+        EditText token=edit("github_pat_…",false); token.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        AlertDialog dialog=new AlertDialog.Builder(activity).setTitle(Language.text(R.string.github_add_token)).setView(token)
+            .setNegativeButton(Language.text(R.string.cancel),null).setPositiveButton(Language.text(R.string.save),null).create();
+        dialog.setOnShowListener(v -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(x -> {
+            try { hub.github.connect(token.getText().toString()); dialog.dismiss(); open("github"); } catch(Exception e) { toast(e.getMessage()); }
+        })); dialog.show();
     }
     private void extension(String id) {
         LinearLayout body=body(); TextView status=status(body,"");

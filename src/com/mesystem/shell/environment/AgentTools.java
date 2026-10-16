@@ -76,7 +76,7 @@ final class AgentTools {
             .put("upgrade",field("boolean","Also update every installed package")));
         tool(tools,"build_self","Build a signed MeShell APK from phone sources.",new JSONObject());
         tool(tools,"install_self","Install the built APK. App restarts; check environment_info afterwards.",new JSONObject());
-        tool(tools,"module_list","List modules, states and actions. Use module_run for notes, device sensors and custom modules.",new JSONObject());
+        tool(tools,"module_list","List modules, states and actions. Use module_run for notes, device sensors, the floating mascot, GitHub and custom modules.",new JSONObject());
         tool(tools,"module_run","Run an enabled module action. Call module_list first for actions and parameters.",new JSONObject()
             .put("module",field("string","Module ID")) .put("action",field("string","Action"))
             .put("arguments",new JSONObject().put("type","object").put("additionalProperties",true)),"module","action");

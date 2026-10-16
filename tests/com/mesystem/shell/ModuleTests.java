@@ -21,6 +21,14 @@ final class ModuleTests {
         portable.getJSONArray("actions").put(portable.getJSONArray("actions").getJSONObject(0));
         rejected=false; try { definitions.validate(portable); } catch(IllegalArgumentException error) { rejected=true; }
         if(!rejected) throw new AssertionError("duplicate action identity");
-        System.out.println("MODULE_TESTS_OK 3"); return 3;
+        if(!GitHubModule.command("issues",new JSONObject().put("repo","octo-org/hello.world")).equals("gh issue list -R 'octo-org/hello.world' --limit 30"))
+            throw new AssertionError("GitHub repository command");
+        for(String repo:new String[]{"","owner","owner/name;rm -rf ~","../x/y","a/b/c"}) {
+            rejected=false; try { GitHubModule.command("repo",new JSONObject().put("repo",repo)); } catch(IllegalArgumentException error) { rejected=true; }
+            if(!rejected) throw new AssertionError("GitHub repository accepted: "+repo);
+        }
+        if(services.quota.QuotaRules.weeklyRemaining(18000,90,604800,35)!=65 || !Double.isNaN(services.quota.QuotaRules.weeklyRemaining(18000,10,0,0)))
+            throw new AssertionError("weekly allowance window");
+        System.out.println("MODULE_TESTS_OK 5"); return 5;
     }
 }

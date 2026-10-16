@@ -54,6 +54,8 @@ If ChatGPT rejects device sign-in, enable device code authorization for Codex in
 | --- | --- |
 | Notes | Local text notes stored on the phone; send a note to chat. |
 | Device | CPU, memory, battery, network traffic and sensor monitor. |
+| Mascot | A floating fox over other apps showing the weekly ChatGPT allowance; drag to move, tap to refresh. Asks for the display-over-apps permission only when you turn it on. |
+| GitHub | Your repositories, issues, pull requests and Actions runs through the official `gh` CLI, which installs on first use. Uses a fine-grained token kept in the vault. |
 
 Custom modules are JSON definitions of shell actions. Create them in **Modules → +**, import a JSON file, or ask the agent to write one. The [`meshell-tools`](https://github.com/ilya-bondarev/meshell-tools) catalogue collects shareable definitions.
 

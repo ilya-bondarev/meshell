@@ -13,7 +13,7 @@ final class IconView extends View {
     static final int HOME=1,CHAT=2,TERMINAL=3,GRID=4,SETTINGS=5,PLUS=6,CLIP=7,MIC=8,SEND=9,STOP=10,
         COPY=11,HISTORY=12,BACK=13,REFRESH=14,PLAY=15,POWER=16,UP=17,DOWN=18,LEFT=19,RIGHT=20,
         SAVE=21,TRASH=22,WIFI=23,CPU=24,SENSOR=25,CHART=26,BLUETOOTH=27,NOTES=28,PHONE=29,TV=30,MORE=31,
-        FOX=32,SEARCH=33,KEY=34,CHEVRON=35;
+        FOX=32,SEARCH=33,KEY=34,CHEVRON=35,BRANCH=36;
     private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Path path=new Path();
     private int icon,color=Ui.INK;
@@ -74,6 +74,7 @@ final class IconView extends View {
             case SEARCH: c.drawCircle(10.5f,10.5f,6.5f,paint); line(c,15.5f,15.5f,21,21); break;
             case KEY: c.drawCircle(7.5f,14.5f,4.5f,paint); line(c,11,11,20,2); line(c,16,6,19,9); line(c,14,8,16,10); break;
             case CHEVRON: line(c,9,5,16,12,9,19); break;
+            case BRANCH: c.drawCircle(6,5,2.5f,paint); c.drawCircle(6,19,2.5f,paint); c.drawCircle(18,6,2.5f,paint); line(c,6,7.5f,6,16.5f); path.moveTo(18,8.5f); path.cubicTo(18,14,6,11,6,16.5f); c.drawPath(path,paint); break;
             default: c.drawCircle(12,12,8,paint);
         }
         path.reset(); c.restore();
